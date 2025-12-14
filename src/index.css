@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #FAFAF9;
+  color: #334155;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Financial figures styling */
+.financial-figure {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+}
+
+/* Display headings */
+.display-heading {
+  font-family: 'DM Serif Display', serif;
+}
+
+/* Focus states for accessibility */
+:focus-visible {
+  outline: 2px solid #7C3AED;
+  outline-offset: 2px;
+}
+
+/* Button base styles */
+.btn {
+  @apply inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200;
+}
+
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Primary button */
+.btn-primary {
+  @apply bg-mx-purple-700 text-white px-6 py-3 hover:bg-mx-purple-600 active:bg-mx-purple-800;
+}
+
+/* Secondary button */
+.btn-secondary {
+  @apply bg-white text-mx-purple-700 border-2 border-mx-purple-700 px-6 py-3 hover:bg-mx-purple-50;
+}
+
+/* Teal/Success button */
+.btn-teal {
+  @apply bg-mx-teal-500 text-white px-6 py-3 hover:bg-mx-teal-600;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-xl shadow-card p-6;
+}
+
+/* Input styles */
+.input {
+  @apply w-full px-4 py-3 border-2 border-mx-slate-200 rounded-lg bg-white text-mx-slate-900 placeholder-mx-slate-400 transition-colors duration-200;
+}
+
+.input:focus {
+  @apply border-mx-purple-500 outline-none ring-2 ring-mx-purple-100;
+}
+
+/* Section padding */
+.section-padding {
+  @apply px-4 py-16 md:px-6 lg:px-8 lg:py-24;
+}
+
+/* Container */
+.container-narrow {
+  @apply max-w-3xl mx-auto;
+}
+
+.container-wide {
+  @apply max-w-7xl mx-auto;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-mx-purple-700 to-mx-purple-500 bg-clip-text text-transparent;
+}
+
+/* Purple gradient background */
+.gradient-purple {
+  background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+}
+
+/* Subtle grain overlay texture class */
+.grain-overlay {
+  position: relative;
+}
+
+.grain-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}

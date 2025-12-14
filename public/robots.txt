@@ -1,0 +1,13 @@
+# robots.txt for millarX
+# https://www.millarx.com.au
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.millarx.com.au/sitemap.xml
+
+# Block common irrelevant paths
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
