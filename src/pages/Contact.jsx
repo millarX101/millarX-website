@@ -104,15 +104,15 @@ export default function Contact() {
             >
               Get in Touch
             </motion.h1>
-          <motion.p
-            variants={fadeInUp}
-            className="text-body-lg text-mx-slate-600 max-w-2xl mx-auto"
-          >
-            Have a question about novated leasing? We're here to help.
-          </motion.p>
-        </motion.div>
+            <motion.p
+              variants={fadeInUp}
+              className="text-body-lg text-mx-slate-600 max-w-2xl mx-auto"
+            >
+              Have a question about novated leasing? We're here to help.
+            </motion.p>
+          </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -252,6 +252,7 @@ export default function Contact() {
               </form>
             </Card>
           </motion.div>
+          </div>
         </div>
       </div>
     </>
