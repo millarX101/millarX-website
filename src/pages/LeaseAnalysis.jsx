@@ -626,10 +626,9 @@ export default function LeaseAnalysis() {
                   href="https://buy.stripe.com/3cIfZjfFk7dkaScez43sI01"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 px-8 py-4 text-lg bg-white text-mx-purple-700 hover:bg-purple-50 shadow-md hover:shadow-lg"
                 >
-                  <Button size="lg" variant="primary" className="bg-white text-mx-purple-700 hover:bg-purple-50 font-semibold px-8 py-4 text-lg">
-                    Get My Lease Rescue Pack
-                  </Button>
+                  Get My Lease Rescue Pack
                 </a>
               </div>
               <p className="text-purple-300 text-sm mt-4">

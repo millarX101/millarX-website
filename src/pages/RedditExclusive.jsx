@@ -4,7 +4,6 @@ import { Shield, Eye, ThumbsUp, ExternalLink, Wrench, Calculator as CalcIcon } f
 import Calculator from '../components/calculator/Calculator'
 import BYOCalculator from '../components/calculator/BYOCalculator'
 import Card from '../components/ui/Card'
-import Button from '../components/ui/Button'
 import { Accordion, AccordionItem } from '../components/ui/Accordion'
 import SEO from '../components/shared/SEO'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
@@ -391,23 +390,18 @@ The calculator assumes GST-claimable (dealer purchase). If buying private, your 
             </a>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-              <Button
-                size="lg"
-                className="bg-white text-mx-slate-900 hover:bg-mx-slate-100"
-                as="a"
+              <a
                 href="#calculator"
+                className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 px-8 py-4 text-body-lg bg-white text-mx-slate-900 hover:bg-mx-slate-100 shadow-md hover:shadow-lg"
               >
                 Get a Quote
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/10"
-                as="a"
+              </a>
+              <a
                 href="/lease-analysis"
+                className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 px-8 py-4 text-body-lg bg-transparent border-2 border-white text-white hover:bg-white/10"
               >
                 Analyse a Competitor Quote
-              </Button>
+              </a>
             </div>
           </motion.div>
         </div>
