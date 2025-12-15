@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion'
-import { ArrowDown, Search, DollarSign, Zap, Shield, Award, Star } from 'lucide-react'
+import { ArrowDown, Search, DollarSign, Zap } from 'lucide-react'
 import Calculator from '../components/calculator/Calculator'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import TrustBadges from '../components/shared/TrustBadges'
 import BlurCircle from '../components/shared/BlurCircle'
 import SEO from '../components/shared/SEO'
+import GoogleReviews from '../components/shared/GoogleReviews'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 import { scrollToElement } from '../lib/utils'
 
@@ -51,18 +52,6 @@ export default function NovatedLeasing() {
     },
   ]
 
-  const testimonials = [
-    {
-      quote: "millarX saved me over $9,000 by showing me the hidden costs in competitor quotes. Their advice was clear and objective.",
-      author: "P.D.",
-      vehicle: "Tesla Model Y",
-    },
-    {
-      quote: "Finally, someone who shows the actual finance rate. Other providers kept dodging that question.",
-      author: "M.K.",
-      vehicle: "BYD Seal",
-    },
-  ]
 
   return (
     <>
@@ -219,47 +208,21 @@ export default function NovatedLeasing() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Google Reviews */}
       <section className="section-padding bg-mx-slate-900 text-white">
         <div className="container-wide mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-8"
           >
             <h2 className="text-display-md font-serif mb-4">
               What Our Customers Say
             </h2>
           </motion.div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
-          >
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                variants={staggerItem}
-                className="p-6 rounded-2xl bg-mx-slate-800"
-              >
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="text-amber-400 fill-current" size={20} />
-                  ))}
-                </div>
-                <p className="text-body-lg text-mx-slate-200 mb-4 italic">
-                  "{testimonial.quote}"
-                </p>
-                <p className="text-body text-mx-slate-400">
-                  — {testimonial.author}, {testimonial.vehicle}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
+          <GoogleReviews autoScroll={true} scrollInterval={5000} />
         </div>
       </section>
 

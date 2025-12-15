@@ -134,17 +134,22 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
 
         {/* Vehicle Price */}
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <label className="text-body font-medium text-mx-slate-700">
-              Vehicle Price
-            </label>
-            <TooltipIcon
-              content={
-                isEV
-                  ? "Popular EV prices are drive-away. Manual entry assumes base price - we'll estimate on-road costs."
-                  : "Enter the vehicle's base price. We'll estimate registration and stamp duty for your state."
-              }
-            />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <label className="text-body font-medium text-mx-slate-700">
+                Vehicle Price
+              </label>
+              <TooltipIcon
+                content={
+                  isEV
+                    ? "Popular EV prices are drive-away. Manual entry assumes base price - we'll estimate on-road costs."
+                    : "Enter the vehicle's base price. We'll estimate registration and stamp duty for your state."
+                }
+              />
+            </div>
+            <span className="text-body-lg font-semibold text-mx-purple-700 font-mono">
+              ${inputs.vehiclePrice.toLocaleString()}
+            </span>
           </div>
           <CurrencySlider
             value={inputs.vehiclePrice}
