@@ -21,75 +21,206 @@ export const mxDriveIQSupabase = mxDriveIQUrl && mxDriveIQKey
 // Helper functions for database operations
 
 /**
- * Save a quote request to the database
+ * Save a quote request to the database AND forward to mxDriveIQ
  */
 export async function saveQuoteRequest(data) {
-  if (!supabase) {
-    console.warn('Supabase not configured, skipping save')
-    return { data: null, error: null }
+  // Save to local Supabase (for backup/analytics)
+  if (supabase) {
+    const { error } = await supabase
+      .from('quote_requests')
+      .insert([data])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error saving to Supabase:', error)
+    }
   }
 
-  const { data: result, error } = await supabase
-    .from('quote_requests')
-    .insert([data])
-    .select()
-    .single()
+  // Forward to mxDriveIQ API for lead management
+  try {
+    const mxDriveIQPayload = {
+      lead_type: 'quote_request',
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      employer: data.employer || null,
+      state: data.state || data.calculation_inputs?.state || 'NSW',
+      annual_salary: data.calculation_inputs?.annualSalary || null,
+      vehicle_make: data.vehicle_make || null,
+      vehicle_model: data.vehicle_model || null,
+      vehicle_variant: data.vehicle_variant || null,
+      vehicle_price: data.calculation_inputs?.vehiclePrice || null,
+      fuel_type: data.calculation_inputs?.fuelType || null,
+      lease_term: data.calculation_inputs?.leaseTermYears || null,
+      annual_km: data.calculation_inputs?.annualKm || null,
+      // Include full calculation data for reference
+      calculation_inputs: data.calculation_inputs,
+      calculation_results: data.calculation_results,
+      // Tracking
+      source: data.source || 'millarx-website',
+      source_page: data.source_page,
+      utm_source: data.utm_source,
+      utm_medium: data.utm_medium,
+      utm_campaign: data.utm_campaign,
+    }
 
-  return { data: result, error }
+    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+
+    if (!response.ok) {
+      console.error('mxDriveIQ API error:', await response.text())
+    } else {
+      console.log('Lead forwarded to mxDriveIQ successfully')
+    }
+  } catch (err) {
+    console.error('Error forwarding to mxDriveIQ:', err)
+    // Don't fail the form submission if API call fails
+  }
+
+  return { data: null, error: null }
 }
 
 /**
- * Save a lease analysis to the database
+ * Save a lease analysis to the database AND forward to mxDriveIQ
  */
 export async function saveLeaseAnalysis(data) {
-  if (!supabase) {
-    console.warn('Supabase not configured, skipping save')
-    return { data: null, error: null }
+  // Save to local Supabase
+  if (supabase) {
+    const { error } = await supabase
+      .from('lease_analyses')
+      .insert([data])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error saving to Supabase:', error)
+    }
   }
 
-  const { data: result, error } = await supabase
-    .from('lease_analyses')
-    .insert([data])
-    .select()
-    .single()
+  // Forward to mxDriveIQ API
+  try {
+    const mxDriveIQPayload = {
+      lead_type: 'lease_analysis',
+      name: data.name || null,
+      email: data.email,
+      phone: data.phone || null,
+      analysis_data: data.analysis_data,
+      source: 'millarx-website',
+      source_page: data.source_page,
+    }
 
-  return { data: result, error }
+    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+
+    if (!response.ok) {
+      console.error('mxDriveIQ API error:', await response.text())
+    }
+  } catch (err) {
+    console.error('Error forwarding to mxDriveIQ:', err)
+  }
+
+  return { data: null, error: null }
 }
 
 /**
- * Save an employer inquiry to the database
+ * Save an employer inquiry to the database AND forward to mxDriveIQ
  */
 export async function saveEmployerInquiry(data) {
-  if (!supabase) {
-    console.warn('Supabase not configured, skipping save')
-    return { data: null, error: null }
+  // Save to local Supabase
+  if (supabase) {
+    const { error } = await supabase
+      .from('employer_inquiries')
+      .insert([data])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error saving to Supabase:', error)
+    }
   }
 
-  const { data: result, error } = await supabase
-    .from('employer_inquiries')
-    .insert([data])
-    .select()
-    .single()
+  // Forward to mxDriveIQ API
+  try {
+    const mxDriveIQPayload = {
+      lead_type: 'employer_inquiry',
+      name: data.contact_name,
+      email: data.email,
+      phone: data.phone || null,
+      employer: data.company_name,
+      employee_count: data.employee_count,
+      source: 'millarx-website',
+      source_page: data.source_page,
+    }
 
-  return { data: result, error }
+    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+
+    if (!response.ok) {
+      console.error('mxDriveIQ API error:', await response.text())
+    }
+  } catch (err) {
+    console.error('Error forwarding to mxDriveIQ:', err)
+  }
+
+  return { data: null, error: null }
 }
 
 /**
- * Save a contact form submission to the database
+ * Save a contact form submission to the database AND forward to mxDriveIQ
  */
 export async function saveContactSubmission(data) {
-  if (!supabase) {
-    console.warn('Supabase not configured, skipping save')
-    return { data: null, error: null }
+  // Save to local Supabase
+  if (supabase) {
+    const { error } = await supabase
+      .from('contact_submissions')
+      .insert([data])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error saving to Supabase:', error)
+    }
   }
 
-  const { data: result, error } = await supabase
-    .from('contact_submissions')
-    .insert([data])
-    .select()
-    .single()
+  // Forward to mxDriveIQ API
+  try {
+    const mxDriveIQPayload = {
+      lead_type: 'contact',
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      inquiry_type: data.inquiryType || data.inquiry_type,
+      message: data.message,
+      source: 'millarx-website',
+      source_page: data.source_page,
+    }
 
-  return { data: result, error }
+    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+
+    if (!response.ok) {
+      console.error('mxDriveIQ API error:', await response.text())
+    }
+  } catch (err) {
+    console.error('Error forwarding to mxDriveIQ:', err)
+  }
+
+  return { data: null, error: null }
 }
 
 export default supabase
