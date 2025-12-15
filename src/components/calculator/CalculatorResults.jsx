@@ -18,34 +18,34 @@ export default function CalculatorResults({
   return (
     <Card className="h-full">
       <h3 className="text-display-sm font-serif text-mx-slate-900 mb-6">
-        Your Savings
+        Your Cost
       </h3>
 
       <div className="space-y-6">
-        {/* Main savings highlight */}
+        {/* Main cost highlight - what you actually pay */}
         <motion.div
           className="p-6 rounded-xl bg-gradient-to-br from-mx-purple-600 to-mx-purple-800 text-white"
           {...fadeInUp}
         >
-          <p className="text-body opacity-80 mb-1">Annual Tax Savings</p>
+          <p className="text-body opacity-80 mb-1">Your Net Cost ({periodLabel})</p>
           <div className="text-4xl font-bold font-mono">
-            <CountUp value={results.annualTaxSavings} format="currency" />
+            <CountUp value={results.netCostPerPeriod} format="currency" />
           </div>
           <p className="text-body-sm opacity-70 mt-2">
-            Over {results.inputs?.leaseTermYears || 3} years: {formatCurrency(results.totalSavingsVsBuying)}
+            After tax savings applied to your pay
           </p>
         </motion.div>
 
-        {/* Net cost */}
-        <div className="p-6 rounded-xl bg-mx-teal-50 border border-mx-teal-200">
-          <p className="text-body text-mx-teal-700 mb-1">
-            Your Net Cost ({periodLabel})
-          </p>
-          <div className="text-3xl font-bold text-mx-teal-700 font-mono">
-            <CountUp value={results.netCostPerPeriod} format="currency" />
+        {/* Tax savings - secondary info */}
+        <div className="p-4 rounded-lg bg-mx-teal-50 border border-mx-teal-200">
+          <div className="flex justify-between items-center">
+            <span className="text-body text-mx-teal-700">Annual Tax Savings</span>
+            <span className="text-body-lg font-bold text-mx-teal-700 font-mono">
+              {formatCurrency(results.annualTaxSavings)}
+            </span>
           </div>
-          <p className="text-body-sm text-mx-teal-600 mt-2">
-            After tax savings applied to your pay
+          <p className="text-body-sm text-mx-teal-600 mt-1">
+            Over {results.inputs?.leaseTermYears || 3} years: {formatCurrency(results.totalSavingsVsBuying)}
           </p>
         </div>
 
