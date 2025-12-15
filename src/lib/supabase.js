@@ -37,7 +37,7 @@ export async function saveQuoteRequest(data) {
     }
   }
 
-  // Forward to mxDriveIQ API for lead management
+  // Forward to mxDriveIQ via Netlify function (avoids CORS)
   try {
     const mxDriveIQPayload = {
       lead_type: 'quote_request',
@@ -54,10 +54,8 @@ export async function saveQuoteRequest(data) {
       fuel_type: data.calculation_inputs?.fuelType || null,
       lease_term: data.calculation_inputs?.leaseTermYears || null,
       annual_km: data.calculation_inputs?.annualKm || null,
-      // Include full calculation data for reference
       calculation_inputs: data.calculation_inputs,
       calculation_results: data.calculation_results,
-      // Tracking
       source: data.source || 'millarx-website',
       source_page: data.source_page,
       utm_source: data.utm_source,
@@ -65,11 +63,9 @@ export async function saveQuoteRequest(data) {
       utm_campaign: data.utm_campaign,
     }
 
-    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+    const response = await fetch('/.netlify/functions/forward-lead', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(mxDriveIQPayload),
     })
 
@@ -80,7 +76,6 @@ export async function saveQuoteRequest(data) {
     }
   } catch (err) {
     console.error('Error forwarding to mxDriveIQ:', err)
-    // Don't fail the form submission if API call fails
   }
 
   return { data: null, error: null }
@@ -103,7 +98,7 @@ export async function saveLeaseAnalysis(data) {
     }
   }
 
-  // Forward to mxDriveIQ API
+  // Forward to mxDriveIQ via Netlify function
   try {
     const mxDriveIQPayload = {
       lead_type: 'lease_analysis',
@@ -115,7 +110,7 @@ export async function saveLeaseAnalysis(data) {
       source_page: data.source_page,
     }
 
-    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+    const response = await fetch('/.netlify/functions/forward-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(mxDriveIQPayload),
@@ -148,7 +143,7 @@ export async function saveEmployerInquiry(data) {
     }
   }
 
-  // Forward to mxDriveIQ API
+  // Forward to mxDriveIQ via Netlify function
   try {
     const mxDriveIQPayload = {
       lead_type: 'employer_inquiry',
@@ -161,7 +156,7 @@ export async function saveEmployerInquiry(data) {
       source_page: data.source_page,
     }
 
-    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+    const response = await fetch('/.netlify/functions/forward-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(mxDriveIQPayload),
@@ -194,7 +189,7 @@ export async function saveContactSubmission(data) {
     }
   }
 
-  // Forward to mxDriveIQ API
+  // Forward to mxDriveIQ via Netlify function
   try {
     const mxDriveIQPayload = {
       lead_type: 'contact',
@@ -207,7 +202,7 @@ export async function saveContactSubmission(data) {
       source_page: data.source_page,
     }
 
-    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+    const response = await fetch('/.netlify/functions/forward-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(mxDriveIQPayload),
