@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Shield, Eye, ThumbsUp, ExternalLink, Wrench } from 'lucide-react'
+import { Shield, Eye, ThumbsUp, ExternalLink, Wrench, Calculator as CalcIcon } from 'lucide-react'
+import Calculator from '../components/calculator/Calculator'
 import BYOCalculator from '../components/calculator/BYOCalculator'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -255,8 +256,34 @@ The calculator assumes GST-claimable (dealer purchase). If buying private, your 
         </div>
       </section>
 
-      {/* BYO Finance Calculator */}
+      {/* Standard Calculator */}
       <section id="calculator" className="px-4 py-16 bg-mx-ivory">
+        <div className="container-wide mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-8"
+          >
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-mx-purple-100 flex items-center justify-center">
+                <CalcIcon className="text-mx-purple-600" size={24} />
+              </div>
+              <h2 className="text-display-md font-serif text-mx-slate-900">
+                Novated Lease Calculator
+              </h2>
+            </div>
+            <p className="text-body-lg text-mx-slate-600 max-w-2xl mx-auto">
+              See your real savings with our transparent calculator. No hidden fees, no inflated estimates.
+            </p>
+          </motion.div>
+
+          <Calculator source="reddit-page" />
+        </div>
+      </section>
+
+      {/* BYO Finance Calculator */}
+      <section id="byo-calculator" className="px-4 py-16 bg-white">
         <div className="container-wide mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

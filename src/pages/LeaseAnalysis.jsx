@@ -13,10 +13,26 @@ import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
 import { RatingBadge } from '../components/ui/Badge'
 import BlurCircle from '../components/shared/BlurCircle'
-import SEO from '../components/shared/SEO'
+import SEO, { createFAQSchema, localBusinessSchema } from '../components/shared/SEO'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 import { formatCurrency } from '../lib/utils'
 import { analyzeLeaseQuote } from '../lib/leaseAnalysis'
+
+// FAQ data for schema
+const leaseAnalysisFAQs = [
+  {
+    question: 'How do I know if my novated lease quote is a good deal?',
+    answer: 'Look at the effective interest rate, not just the advertised rate. A competitive rate in 2025 is 7-8.5%. If the calculated rate seems high, your quote may include hidden fees, bundled insurance, or inflated admin costs. Our free analyser tool reverse-engineers your quote to show the true rate.'
+  },
+  {
+    question: 'What hidden fees should I look for in a novated lease quote?',
+    answer: 'Common hidden fees include: inflated insurance premiums (gap cover, comprehensive), excessive admin fees ($10-20/month), bundled extended warranties, tyre and service budget surpluses that the provider keeps, and finance rate margins above market rates.'
+  },
+  {
+    question: 'Can I compare novated lease quotes from different providers?',
+    answer: 'Yes! Our Lease Analysis tool helps you compare quotes objectively. Enter the key details (FBT value, payment amount, balloon/residual, term) and we\'ll calculate the effective rate and flag any potential issues to help you negotiate or choose the best provider.'
+  }
+]
 
 export default function LeaseAnalysis() {
   const [formData, setFormData] = useState({
@@ -115,9 +131,28 @@ export default function LeaseAnalysis() {
   return (
     <>
       <SEO
-        title="Analyse Your Novated Lease Quote"
-        description="Is your novated lease quote a good deal? Analyse any competitor quote in 60 seconds. We'll show you the hidden fees they don't want you to see."
+        title="Free Novated Lease Quote Analyser Australia 2025 | Check Hidden Fees"
+        description="Is your novated lease quote a good deal? Free quote analyser reveals hidden fees, calculates true interest rates, and compares against market benchmarks. Takes 60 seconds."
         canonical="/lease-analysis"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            localBusinessSchema,
+            createFAQSchema(leaseAnalysisFAQs),
+            {
+              '@type': 'WebApplication',
+              'name': 'millarX Novated Lease Quote Analyser',
+              'description': 'Free online tool to analyse and compare novated lease quotes from Australian providers',
+              'applicationCategory': 'FinanceApplication',
+              'operatingSystem': 'Web',
+              'offers': {
+                '@type': 'Offer',
+                'price': '0',
+                'priceCurrency': 'AUD'
+              }
+            }
+          ]
+        }}
       />
 
       <div className="relative overflow-hidden">

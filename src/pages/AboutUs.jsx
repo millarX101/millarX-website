@@ -4,25 +4,25 @@ import { Zap, Shield, Eye, Heart, TrendingUp, Users, Clock, CheckCircle } from '
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import BlurCircle from '../components/shared/BlurCircle'
-import SEO from '../components/shared/SEO'
+import SEO, { localBusinessSchema } from '../components/shared/SEO'
 import { staggerContainer, staggerItem, fadeInUp } from '../lib/animations'
 
 export default function AboutUs() {
   const techBenefits = [
     {
       icon: Zap,
-      title: 'Streamlined Process',
-      description: 'Our proprietary system cuts out unnecessary steps and middlemen, making the entire process faster and simpler.',
+      title: 'Self-Guided Platform',
+      description: 'No leasing consultants, no sales calls. Our digital platform puts you in control of your entire leasing journey.',
     },
     {
       icon: TrendingUp,
-      title: 'Lower Costs',
-      description: 'By eliminating inefficiencies, we pass the savings directly to you — where they belong.',
+      title: 'Zero Fee Creep',
+      description: 'We don\'t add anything to your lease that isn\'t necessary. No hidden fees, no undisclosed interest rate margins.',
     },
     {
       icon: Eye,
-      title: 'Real-Time Visibility',
-      description: 'See exactly where you stand at any moment. No surprises, no hidden calculations.',
+      title: 'Real-Time Transparency',
+      description: 'See every cost, every calculation, instantly. Our technology replaces opaque spreadsheets with clarity.',
     },
   ]
 
@@ -52,9 +52,20 @@ export default function AboutUs() {
   return (
     <>
       <SEO
-        title="About Us | millarX"
-        description="Disrupting novated leasing through technology and transparency. With 25+ years in financial services, we're changing how Australians access salary packaging."
+        title="About millarX | Tech-First Novated Leasing Platform Australia"
+        description="We're a tech company disrupting novated leasing. Self-guided platform, zero fee creep, no undisclosed rates. Guide your own leasing journey without consultants or sales pressure."
         canonical="/about"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            localBusinessSchema,
+            {
+              '@type': 'AboutPage',
+              'name': 'About millarX',
+              'description': 'Tech-first novated leasing platform disrupting the traditional consultant-heavy model'
+            }
+          ]
+        }}
       />
 
       <div className="bg-white">
@@ -112,17 +123,20 @@ export default function AboutUs() {
                   </p>
 
                   <p>
-                    Complex fee structures. Hidden margins. Opaque pricing that makes it nearly impossible to know if you're getting a fair deal.
-                    An industry that profits from confusion rather than clarity.
+                    The traditional model relies heavily on manpower — armies of leasing consultants, salespeople,
+                    and administrators. Complex fee structures, hidden margins, and opaque pricing that makes it
+                    nearly impossible to know if you're getting a fair deal. An industry that profits from
+                    confusion rather than clarity.
                   </p>
 
                   <p className="text-mx-purple-700 font-semibold">
-                    millarX was born to change this.
+                    millarX was built to change this.
                   </p>
 
                   <p>
-                    We're not just disruptive through technology — we're disruptive through transparency.
-                    We firmly believe you should know exactly what you're getting, what you're paying, and what you're budgeting for.
+                    We're a tech company, not a leasing consultancy. We don't add anything to your lease that
+                    isn't necessary. Avoid the fee creep and high undisclosed interest rates by letting our
+                    platform guide your own leasing journey — on your terms, at your pace.
                   </p>
                 </div>
               </motion.div>
@@ -140,10 +154,10 @@ export default function AboutUs() {
               className="text-center mb-12"
             >
               <h2 className="text-display-md font-serif text-mx-slate-900 mb-4">
-                Technology That Works <span className="gradient-text">For You</span>
+                Tech-First, <span className="gradient-text">Human-Optional</span>
               </h2>
               <p className="text-body-lg text-mx-slate-600 max-w-2xl mx-auto">
-                Our proprietary system cuts out unnecessary costs in the process and keeps the savings where they should go — in your pocket.
+                Traditional providers rely on armies of consultants. We built software that lets you drive your own journey — no sales calls, no pressure, just tools that work.
               </p>
             </motion.div>
 

@@ -14,7 +14,7 @@ import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
 import BlurCircle from '../components/shared/BlurCircle'
-import SEO from '../components/shared/SEO'
+import SEO, { localBusinessSchema } from '../components/shared/SEO'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 
 export default function Employers() {
@@ -22,17 +22,17 @@ export default function Employers() {
     {
       icon: Zap,
       title: 'Zero Cost to You',
-      description: 'No setup fees, no ongoing costs. We make our money from the finance, not from you.',
+      description: 'No setup fees, no ongoing costs. Our revenue comes from finance, not employer charges.',
     },
     {
       icon: Users,
       title: 'Self-Service Platform',
-      description: 'Less admin for your payroll team. Employees can see everything themselves.',
+      description: 'No consultants needed. Employees guide their own journey through our digital platform.',
     },
     {
       icon: Heart,
       title: 'Happy Employees',
-      description: 'No complaints about hidden fees or pushy sales. Transparent pricing everyone appreciates.',
+      description: 'No complaints about hidden fees or pushy sales calls. Tech-enabled transparency they appreciate.',
     },
   ]
 
@@ -68,26 +68,49 @@ export default function Employers() {
     {
       step: 1,
       title: 'Sign Up',
-      description: 'Quick employer agreement takes about 10 minutes.',
+      description: 'Digital employer agreement takes about 10 minutes.',
     },
     {
       step: 2,
       title: 'Share Link',
-      description: 'Give employees the calculator link to explore options.',
+      description: 'Give employees the platform link to explore options.',
     },
     {
       step: 3,
-      title: 'We Handle It',
-      description: 'Quotes, finance, deductions — all automated.',
+      title: 'Automated',
+      description: 'Quotes, finance, deductions — all handled by our platform.',
     },
   ]
 
   return (
     <>
       <SEO
-        title="Novated Leasing for Employers"
-        description="Offer your employees transparent novated leasing at zero cost to your business. Self-service platform, minimal admin, no hidden fees."
+        title="Novated Leasing for Employers Australia 2025 | Zero Cost Employee Benefit"
+        description="Offer transparent novated leasing to your employees at zero cost. Self-service platform reduces HR admin by 80%. No setup fees, no hidden costs. Partner with millarX today."
         canonical="/employers"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            localBusinessSchema,
+            {
+              '@type': 'Service',
+              'name': 'Employer Novated Leasing Partnership',
+              'description': 'Zero-cost novated leasing benefit program for Australian employers',
+              'provider': localBusinessSchema,
+              'serviceType': 'Employee Benefits Administration',
+              'areaServed': {
+                '@type': 'Country',
+                'name': 'Australia'
+              },
+              'offers': {
+                '@type': 'Offer',
+                'price': '0',
+                'priceCurrency': 'AUD',
+                'description': 'No setup fees, no ongoing costs to employers'
+              }
+            }
+          ]
+        }}
       />
 
       <div className="relative overflow-hidden">

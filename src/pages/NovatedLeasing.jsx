@@ -4,10 +4,34 @@ import Calculator from '../components/calculator/Calculator'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import BlurCircle from '../components/shared/BlurCircle'
-import SEO from '../components/shared/SEO'
+import SEO, { createFAQSchema, localBusinessSchema } from '../components/shared/SEO'
 import GoogleReviews from '../components/shared/GoogleReviews'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 import { scrollToElement } from '../lib/utils'
+
+// FAQ data for both display and schema
+const novatedLeasingFAQs = [
+  {
+    question: 'What is novated leasing and how does it work in Australia?',
+    answer: 'A novated lease is a salary packaging arrangement where your employer deducts lease payments from your pre-tax salary, reducing your taxable income. You choose the car, millarX arranges the finance, and your employer makes the payments. At the end of the lease term, you can pay out the residual and keep the car, trade it in, or start a new lease.'
+  },
+  {
+    question: 'How much can I save with a novated lease?',
+    answer: 'Savings depend on your income tax bracket and whether you choose an FBT-exempt electric vehicle. Typically, employees save 20-40% compared to buying a car outright. Use our calculator above to see your exact potential savings based on your salary and vehicle choice.'
+  },
+  {
+    question: 'Are electric vehicles (EVs) FBT exempt for novated leasing?',
+    answer: 'Yes, eligible electric vehicles under $91,387 are exempt from Fringe Benefits Tax (FBT) until 2027. This means significantly larger tax savings compared to petrol or diesel vehicles. The FBT exemption makes EVs particularly attractive for novated leasing.'
+  },
+  {
+    question: 'What costs are included in a novated lease?',
+    answer: 'A novated lease can include the vehicle finance payments, registration, insurance, servicing, tyres, fuel or charging costs, and roadside assistance. All running costs are bundled into one regular payment deducted from your salary.'
+  },
+  {
+    question: 'Do I need my employer\'s approval for a novated lease?',
+    answer: 'Yes, your employer needs to agree to salary packaging. Most medium to large employers offer novated leasing as an employee benefit. We can help you check if your employer participates and guide you through the process.'
+  }
+]
 
 export default function NovatedLeasing() {
   const valueProps = [
@@ -42,7 +66,7 @@ export default function NovatedLeasing() {
     {
       step: 3,
       title: 'Apply',
-      description: 'We handle the paperwork with your employer.',
+      description: 'Our platform guides you through employer setup.',
     },
     {
       step: 4,
@@ -55,9 +79,28 @@ export default function NovatedLeasing() {
   return (
     <>
       <SEO
-        title="Novated Leasing Calculator"
-        description="Calculate your novated lease savings instantly. Transparent pricing, no hidden fees. See exactly what you'll pay with our free novated lease calculator."
+        title="Novated Lease Calculator Australia 2025 | EV & Car Salary Packaging"
+        description="Free novated lease calculator for Australia. Calculate EV salary sacrifice savings instantly. FBT-exempt electric vehicles, transparent pricing, no hidden fees. See exactly what you'll save on your next car."
         canonical="/novated-leasing"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            localBusinessSchema,
+            createFAQSchema(novatedLeasingFAQs),
+            {
+              '@type': 'WebApplication',
+              'name': 'millarX Novated Lease Calculator',
+              'description': 'Free online calculator to estimate novated lease savings for Australian employees',
+              'applicationCategory': 'FinanceApplication',
+              'operatingSystem': 'Web',
+              'offers': {
+                '@type': 'Offer',
+                'price': '0',
+                'priceCurrency': 'AUD'
+              }
+            }
+          ]
+        }}
       />
 
       <div className="relative overflow-hidden">

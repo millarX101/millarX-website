@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Zap, Calendar, ArrowLeft, Car, Loader2, AlertCircle } from 'lucide-react'
 import { fetchEVCatalog } from '../lib/supabase'
-import SEO from '../components/shared/SEO'
+import SEO, { localBusinessSchema } from '../components/shared/SEO'
 import Button from '../components/ui/Button'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 
@@ -72,9 +72,38 @@ export default function BrowseEVs() {
   return (
     <>
       <SEO
-        title="Browse Electric Vehicles"
-        description="Browse our complete EV catalogue with competitive fixed pricing. Get an instant novated lease quote on Tesla, BYD, BMW, and more electric vehicles."
+        title="Browse FBT-Exempt Electric Vehicles Australia 2025 | EV Novated Lease Prices"
+        description="Browse FBT-exempt electric vehicles with fixed drive-away pricing. Tesla, BYD, BMW & more EVs. Get instant novated lease quotes with real tax savings calculated. Updated 2025 prices."
         canonical="/browse-evs"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            localBusinessSchema,
+            {
+              '@type': 'ItemList',
+              'name': 'FBT-Exempt Electric Vehicles for Novated Leasing',
+              'description': 'Electric vehicles available for novated leasing in Australia with FBT exemption',
+              'itemListElement': evs.slice(0, 10).map((ev, index) => ({
+                '@type': 'ListItem',
+                'position': index + 1,
+                'item': {
+                  '@type': 'Car',
+                  'name': `${ev.year} ${ev.make} ${ev.model}`,
+                  'brand': { '@type': 'Brand', 'name': ev.make },
+                  'model': ev.model,
+                  'vehicleModelDate': ev.year?.toString(),
+                  'fuelType': 'Electric',
+                  'offers': {
+                    '@type': 'Offer',
+                    'price': ev.drive_away_price || ev.rrp,
+                    'priceCurrency': 'AUD',
+                    'availability': 'https://schema.org/InStock'
+                  }
+                }
+              }))
+            }
+          ]
+        }}
       />
 
       <div className="min-h-screen bg-mx-ivory">
