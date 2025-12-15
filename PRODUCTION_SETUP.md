@@ -107,79 +107,77 @@ CREATE POLICY "Allow anonymous inserts" ON lease_analyses
   FOR INSERT WITH CHECK (true);
 ```
 
-## Email Notifications (Optional)
+## Email Notifications
 
-To receive email notifications when leads come in, set up Supabase Edge Functions:
+The email notification Edge Function is already created at `supabase/functions/send-lead-email/`. It uses [Resend](https://resend.com) for reliable email delivery.
 
-### 1. Create Edge Function for Email Notifications
+### 1. Set Up Resend
 
-Create a new Edge Function called `send-lead-notification`:
-
-```typescript
-// supabase/functions/send-lead-notification/index.ts
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-
-const GMAIL_USER = Deno.env.get('GMAIL_USER')
-const GMAIL_APP_PASSWORD = Deno.env.get('GMAIL_APP_PASSWORD')
-const NOTIFICATION_EMAIL = Deno.env.get('NOTIFICATION_EMAIL') || GMAIL_USER
-
-serve(async (req) => {
-  const { type, data } = await req.json()
-
-  // Format email based on lead type
-  let subject = ''
-  let body = ''
-
-  if (type === 'quote_request') {
-    subject = `New Quote Request from ${data.name}`
-    body = `
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.phone || 'Not provided'}
-Vehicle Price: $${data.vehicle_price?.toLocaleString() || 'N/A'}
-Salary: $${data.salary?.toLocaleString() || 'N/A'}
-Source: ${data.source_page}
-    `
-  } else if (type === 'employer_inquiry') {
-    subject = `New Employer Inquiry from ${data.company_name}`
-    body = `
-Company: ${data.company_name}
-Contact: ${data.contact_name}
-Email: ${data.email}
-Phone: ${data.phone || 'Not provided'}
-Employees: ${data.employee_count || 'N/A'}
-    `
-  } else if (type === 'contact_submission') {
-    subject = `New Contact Form from ${data.name}`
-    body = `
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.phone || 'Not provided'}
-Type: ${data.inquiry_type || 'N/A'}
-Message: ${data.message}
-    `
-  }
-
-  // Send email using Gmail SMTP (via fetch to a mail service)
-  // Note: You may want to use a service like SendGrid, Resend, or Mailgun instead
-
-  return new Response(JSON.stringify({ success: true }), {
-    headers: { 'Content-Type': 'application/json' }
-  })
-})
-```
+1. Create a free account at [resend.com](https://resend.com)
+2. Add and verify your domain (millarx.com.au)
+3. Create an API key
 
 ### 2. Set Secrets in Supabase
 
 ```bash
-supabase secrets set GMAIL_USER=your-email@gmail.com
-supabase secrets set GMAIL_APP_PASSWORD=your-app-password
-supabase secrets set NOTIFICATION_EMAIL=leads@millarx.com.au
+# Login to Supabase CLI (if not already)
+npx supabase login
+
+# Link your project
+npx supabase link --project-ref YOUR_PROJECT_REF
+
+# Set the required secrets
+npx supabase secrets set RESEND_API_KEY=re_xxxxxxxxxxxx
+npx supabase secrets set NOTIFICATION_EMAIL=leads@millarx.com.au
+npx supabase secrets set FROM_EMAIL="millarX <notifications@millarx.com.au>"
 ```
 
-### 3. Create Database Webhooks
+### 3. Deploy the Edge Function
 
-In Supabase Dashboard > Database > Webhooks, create webhooks for each table to call the Edge Function when new rows are inserted.
+```bash
+# Deploy the email notification function
+npx supabase functions deploy send-lead-email
+
+# Verify it's deployed
+npx supabase functions list
+```
+
+### 4. Create Database Webhooks
+
+In Supabase Dashboard > Database > Webhooks, create webhooks to trigger emails on new inserts:
+
+**Webhook 1: Quote Requests**
+- Name: `notify-quote-request`
+- Table: `quote_requests`
+- Events: INSERT
+- Type: Supabase Edge Functions
+- Function: `send-lead-email`
+- HTTP Headers: `Content-Type: application/json`
+
+**Webhook 2: Employer Inquiries**
+- Name: `notify-employer-inquiry`
+- Table: `employer_inquiries`
+- Events: INSERT
+- Type: Supabase Edge Functions
+- Function: `send-lead-email`
+
+**Webhook 3: Contact Submissions**
+- Name: `notify-contact-submission`
+- Table: `contact_submissions`
+- Events: INSERT
+- Type: Supabase Edge Functions
+- Function: `send-lead-email`
+
+**Webhook 4: Lease Analyses**
+- Name: `notify-lease-analysis`
+- Table: `lease_analyses`
+- Events: INSERT
+- Type: Supabase Edge Functions
+- Function: `send-lead-email`
+
+### 5. Test the Webhook
+
+After setting up, submit a test form on your website. You should receive a nicely formatted HTML email within seconds.
 
 ## Storage Setup
 
