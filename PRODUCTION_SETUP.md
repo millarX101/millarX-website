@@ -109,30 +109,28 @@ CREATE POLICY "Allow anonymous inserts" ON lease_analyses
 
 ## Email Notifications
 
-The email notification Edge Function is already created at `supabase/functions/send-lead-email/`. It uses [Resend](https://resend.com) for reliable email delivery.
+The email notification Edge Function is at `supabase/functions/send-lead-email/`. It uses **Gmail SMTP** (same as all other millarX emails).
 
-### 1. Set Up Resend
+### 1. Set Gmail Secrets in Supabase
 
-1. Create a free account at [resend.com](https://resend.com)
-2. Add and verify your domain (millarx.com.au)
-3. Create an API key
-
-### 2. Set Secrets in Supabase
+The Edge Function runs on Supabase (not Netlify), so secrets go in Supabase:
 
 ```bash
 # Login to Supabase CLI (if not already)
 npx supabase login
 
 # Link your project
-npx supabase link --project-ref YOUR_PROJECT_REF
+npx supabase link --project-ref ktsjfqbosdmataezkcbh
 
-# Set the required secrets
-npx supabase secrets set RESEND_API_KEY=re_xxxxxxxxxxxx
+# Set Gmail credentials (same as your other emails)
+npx supabase secrets set GMAIL_USER=your-gmail@gmail.com
+npx supabase secrets set GMAIL_APP_PASSWORD=your-app-password
 npx supabase secrets set NOTIFICATION_EMAIL=leads@millarx.com.au
-npx supabase secrets set FROM_EMAIL="millarX <notifications@millarx.com.au>"
 ```
 
-### 3. Deploy the Edge Function
+**Note:** You do NOT need to add Gmail credentials to Netlify. The Edge Function runs entirely on Supabase, not on Netlify. Netlify only hosts the static frontend.
+
+### 2. Deploy the Edge Function
 
 ```bash
 # Deploy the email notification function
@@ -142,7 +140,7 @@ npx supabase functions deploy send-lead-email
 npx supabase functions list
 ```
 
-### 4. Create Database Webhooks
+### 3. Create Database Webhooks
 
 In Supabase Dashboard > Database > Webhooks, create webhooks to trigger emails on new inserts:
 
@@ -175,7 +173,7 @@ In Supabase Dashboard > Database > Webhooks, create webhooks to trigger emails o
 - Type: Supabase Edge Functions
 - Function: `send-lead-email`
 
-### 5. Test the Webhook
+### 4. Test the Webhook
 
 After setting up, submit a test form on your website. You should receive a nicely formatted HTML email within seconds.
 

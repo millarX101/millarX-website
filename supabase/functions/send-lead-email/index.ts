@@ -1,18 +1,19 @@
 // Supabase Edge Function: send-lead-email
-// Sends email notifications when new leads are created
-// Supports: quote_requests, employer_inquiries, contact_submissions
+// Sends email notifications when new leads are created via Gmail SMTP
+// Supports: quote_requests, employer_inquiries, contact_submissions, lease_analyses
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { SmtpClient } from 'https://deno.land/x/smtp@v0.7.0/mod.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Email configuration
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
-const NOTIFICATION_EMAIL = Deno.env.get('NOTIFICATION_EMAIL') || 'leads@millarx.com.au'
-const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'millarX <notifications@millarx.com.au>'
+// Gmail configuration
+const GMAIL_USER = Deno.env.get('GMAIL_USER')
+const GMAIL_APP_PASSWORD = Deno.env.get('GMAIL_APP_PASSWORD')
+const NOTIFICATION_EMAIL = Deno.env.get('NOTIFICATION_EMAIL') || GMAIL_USER
 
 interface EmailPayload {
   to: string
@@ -22,38 +23,38 @@ interface EmailPayload {
 }
 
 async function sendEmail(payload: EmailPayload): Promise<boolean> {
-  if (!RESEND_API_KEY) {
-    console.log('RESEND_API_KEY not configured, skipping email')
-    console.log('Would have sent:', payload)
+  if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
+    console.log('Gmail credentials not configured, skipping email')
+    console.log('Would have sent:', { to: payload.to, subject: payload.subject })
     return false
   }
 
+  const client = new SmtpClient()
+
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: payload.to,
-        subject: payload.subject,
-        html: payload.html,
-        text: payload.text,
-      }),
+    await client.connectTLS({
+      hostname: 'smtp.gmail.com',
+      port: 465,
+      username: GMAIL_USER,
+      password: GMAIL_APP_PASSWORD,
     })
 
-    if (!response.ok) {
-      const error = await response.text()
-      console.error('Email send failed:', error)
-      return false
-    }
+    await client.send({
+      from: GMAIL_USER,
+      to: payload.to,
+      subject: payload.subject,
+      content: payload.text || '',
+      html: payload.html,
+    })
 
-    console.log('Email sent successfully')
+    await client.close()
+    console.log('Email sent successfully via Gmail')
     return true
   } catch (error) {
-    console.error('Email send error:', error)
+    console.error('Gmail send error:', error)
+    try {
+      await client.close()
+    } catch {}
     return false
   }
 }
@@ -177,7 +178,7 @@ Lead ID: ${record.id}
 `
 
   return {
-    to: NOTIFICATION_EMAIL,
+    to: NOTIFICATION_EMAIL!,
     subject: `New Quote Request: ${record.name || 'Unknown'} - ${vehicleInfo}`,
     html,
     text,
@@ -239,7 +240,7 @@ Lead ID: ${record.id}
 `
 
   return {
-    to: NOTIFICATION_EMAIL,
+    to: NOTIFICATION_EMAIL!,
     subject: `New Employer Inquiry: ${record.company_name || 'Unknown'} (${record.employee_count || 'N/A'} employees)`,
     html,
     text,
@@ -308,7 +309,7 @@ Submission ID: ${record.id}
 `
 
   return {
-    to: NOTIFICATION_EMAIL,
+    to: NOTIFICATION_EMAIL!,
     subject: `Contact Form: ${record.name || 'Unknown'} - ${record.inquiry_type || record.inquiryType || 'General Inquiry'}`,
     html,
     text,
@@ -375,7 +376,7 @@ Analysis ID: ${record.id}
 `
 
   return {
-    to: NOTIFICATION_EMAIL,
+    to: NOTIFICATION_EMAIL!,
     subject: `Lease Analysis: ${record.name || record.email || 'Unknown'} - ${analysisData.providerName || 'Provider Review'}`,
     html,
     text,
