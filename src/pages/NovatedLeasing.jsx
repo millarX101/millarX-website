@@ -280,7 +280,7 @@ export default function NovatedLeasing() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
-                className="bg-white text-mx-purple-700 hover:bg-mx-purple-50"
+                className="bg-mx-purple-100 text-mx-purple-700 hover:bg-white"
                 onClick={() => scrollToElement('calculator')}
               >
                 Get a Formal Quote

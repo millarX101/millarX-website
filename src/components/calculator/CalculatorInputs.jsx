@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, Zap, Car } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ChevronDown, ChevronUp, Zap, Car, Search } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CurrencySlider, KilometerSlider, YearSlider } from '../ui/Slider'
 import Select from '../ui/Select'
@@ -100,15 +101,25 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           </motion.div>
         )}
 
-        {/* Popular EVs Dropdown (only for EVs) */}
+        {/* Browse EVs Button (only for EVs) */}
         {isEV && (
-          <Select
-            label="Popular Electric Vehicles"
-            options={popularEVOptions}
-            value={inputs.selectedEV}
-            onChange={(e) => updateInput('selectedEV', e.target.value)}
-            helperText="Select a popular EV to auto-fill drive-away price"
-          />
+          <div>
+            <label className="flex items-center gap-2 text-body font-medium text-mx-slate-700 mb-3">
+              <Car size={20} className="text-mx-purple-600" />
+              Vehicle Details
+            </label>
+            <Link
+              to="/browse-evs"
+              className="flex items-center justify-center gap-3 w-full px-6 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg"
+            >
+              <Search size={20} />
+              Browse Electric Vehicles
+              <Zap size={20} />
+            </Link>
+            <p className="text-body-sm text-mx-slate-500 mt-2 text-center">
+              View our complete EV catalogue with competitive pricing
+            </p>
+          </div>
         )}
 
         {/* Non-EV Vehicle Type Selection */}

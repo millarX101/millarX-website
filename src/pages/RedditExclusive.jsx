@@ -7,6 +7,7 @@ import Button from '../components/ui/Button'
 import { Accordion, AccordionItem } from '../components/ui/Accordion'
 import SEO from '../components/shared/SEO'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
+import { getMediaUrl, MEDIA } from '../lib/supabase'
 
 export default function RedditExclusive() {
   const valueProps = [
@@ -139,9 +140,11 @@ The calculator assumes GST-claimable (dealer purchase). If buying private, your 
       <header className="py-6 px-4 md:px-6">
         <div className="container-wide mx-auto">
           <Link to="/" className="inline-block">
-            <span className="text-2xl md:text-3xl font-serif text-mx-purple-700 tracking-tight">
-              millar<span className="text-mx-slate-900">X</span>
-            </span>
+            <img
+              src={getMediaUrl(MEDIA.logo)}
+              alt="millarX"
+              className="h-8 md:h-10 w-auto"
+            />
           </Link>
         </div>
       </header>

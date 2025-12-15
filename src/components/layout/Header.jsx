@@ -25,7 +25,7 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center" onClick={closeMobileMenu}>
             {logoUrl ? (
-              <img src={logoUrl} alt="millarX" className="h-8 md:h-10 w-auto" />
+              <img src={logoUrl} alt="millarX" className="h-12 md:h-14 w-auto" />
             ) : (
               <span className="text-2xl md:text-3xl font-serif text-mx-purple-700 tracking-tight">
                 millar<span className="text-mx-slate-900">X</span>

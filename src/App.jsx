@@ -9,6 +9,7 @@ import Terms from './pages/Terms'
 import Complaints from './pages/Complaints'
 import CreditGuide from './pages/CreditGuide'
 import RedditExclusive from './pages/RedditExclusive'
+import BrowseEVs from './pages/BrowseEVs'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/complaints" element={<Complaints />} />
           <Route path="/credit-guide" element={<CreditGuide />} />
+          <Route path="/browse-evs" element={<BrowseEVs />} />
         </Route>
 
         {/* Reddit exclusive page - no nav, minimal layout */}

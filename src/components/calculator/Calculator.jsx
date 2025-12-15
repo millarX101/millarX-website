@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import CalculatorInputs from './CalculatorInputs'
 import CalculatorResults from './CalculatorResults'
@@ -9,6 +10,8 @@ import { fadeInUp, staggerContainer } from '../../lib/animations'
 import { POPULAR_EVS } from '../../lib/constants'
 
 export default function Calculator({ source = 'website', showAdvanced = false }) {
+  const location = useLocation()
+
   const [inputs, setInputs] = useState({
     vehiclePrice: 65000,
     annualSalary: 90000,
@@ -23,6 +26,22 @@ export default function Calculator({ source = 'website', showAdvanced = false })
 
   const [showBreakdown, setShowBreakdown] = useState(false)
   const [showQuoteForm, setShowQuoteForm] = useState(false)
+
+  // Handle incoming vehicle data from Browse EVs page
+  useEffect(() => {
+    if (location.state?.vehicleData) {
+      const { vehicleData } = location.state
+      setInputs(prev => ({
+        ...prev,
+        vehiclePrice: vehicleData.price || prev.vehiclePrice,
+        fuelType: 'Electric Vehicle',
+        selectedEV: `${vehicleData.make} ${vehicleData.model} ${vehicleData.trim || ''}`.trim(),
+        isOnRoadPriceIncluded: true, // EV catalog prices are drive-away
+      }))
+      // Clear the state so it doesn't re-apply on subsequent renders
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state])
 
   // Calculate results whenever inputs change
   const results = useMemo(() => {

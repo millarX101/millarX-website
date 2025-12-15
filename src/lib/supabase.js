@@ -1,11 +1,21 @@
 import { createClient } from '@supabase/supabase-js'
 
+// millarX Supabase (for leads, storage, etc.)
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
-// Create a single supabase client for interacting with your database
+// mxDriveIQ Supabase (for EV catalog - shared data)
+const mxDriveIQUrl = import.meta.env.VITE_MXDRIVEIQ_SUPABASE_URL || ''
+const mxDriveIQKey = import.meta.env.VITE_MXDRIVEIQ_SUPABASE_ANON_KEY || ''
+
+// Create millarX supabase client for leads and storage
 export const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
+
+// Create mxDriveIQ supabase client for EV catalog
+export const mxDriveIQSupabase = mxDriveIQUrl && mxDriveIQKey
+  ? createClient(mxDriveIQUrl, mxDriveIQKey)
   : null
 
 // Helper functions for database operations
@@ -85,6 +95,32 @@ export async function saveContactSubmission(data) {
 export default supabase
 
 // ============================================
+// EV CATALOG (from mxDriveIQ Supabase)
+// ============================================
+
+/**
+ * Fetch all active EVs from the mxDriveIQ catalog
+ * Sorted: specials first, then by popularity
+ * Uses the mxDriveIQ Supabase project (shared data)
+ */
+export async function fetchEVCatalog() {
+  if (!mxDriveIQSupabase) {
+    console.warn('mxDriveIQ Supabase not configured, returning empty catalog')
+    return { data: [], error: null }
+  }
+
+  const { data, error } = await mxDriveIQSupabase
+    .from('ev_catalog')
+    .select('*')
+    .eq('is_active', true)
+    .order('is_special', { ascending: false })
+    .order('special_order', { ascending: true })
+    .order('popularity_score', { ascending: false })
+
+  return { data, error }
+}
+
+// ============================================
 // STORAGE - Media Assets
 // ============================================
 
@@ -124,11 +160,11 @@ export function getMediaUrl(path) {
  * - videos/
  */
 export const MEDIA = {
-  // Logos
-  logo: 'logos/millarx-logo.svg',
-  logoWhite: 'logos/millarx-logo-white.svg',
+  // Logos - Direct URLs from Supabase Storage
+  logo: 'https://ktsjfqbosdmataezkcbh.supabase.co/storage/v1/object/public/media/logos/millerX_dark%20(2).jpg',
+  logoWhite: 'https://ktsjfqbosdmataezkcbh.supabase.co/storage/v1/object/public/media/logos/millerX_light.png',
   logoIcon: 'logos/millarx-icon.svg',
-  logoDark: 'logos/millarx-logo-dark.svg',
+  logoDark: 'https://ktsjfqbosdmataezkcbh.supabase.co/storage/v1/object/public/media/logos/millerX_dark%20(2).jpg',
 
   // Open Graph / Social
   ogImage: 'images/og-image.png',
