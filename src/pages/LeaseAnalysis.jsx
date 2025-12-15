@@ -4,10 +4,8 @@ import {
   AlertTriangle,
   CheckCircle,
   AlertCircle,
-  ArrowRight,
-  Phone,
-  Mail,
-  Star,
+  Shield,
+  TrendingUp,
 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -17,8 +15,8 @@ import { RatingBadge } from '../components/ui/Badge'
 import BlurCircle from '../components/shared/BlurCircle'
 import SEO from '../components/shared/SEO'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
-import { formatCurrency, formatPercentage } from '../lib/utils'
-import { STATES, BALLOON_PERCENTS } from '../lib/constants'
+import { formatCurrency } from '../lib/utils'
+import { analyzeLeaseQuote } from '../lib/leaseAnalysis'
 
 export default function LeaseAnalysis() {
   const [formData, setFormData] = useState({
@@ -28,11 +26,11 @@ export default function LeaseAnalysis() {
     residualValue: '',
     financePayment: '',
     paymentFrequency: 'monthly',
-    leaseTerm: '5',
-    state: 'VIC',
+    leaseTerm: '3',
     vehicleType: 'ev',
     balloonIncludesGST: false,
     shownRate: '',
+    state: 'VIC',
   })
 
   const [results, setResults] = useState(null)
@@ -50,133 +48,67 @@ export default function LeaseAnalysis() {
     e.preventDefault()
     setIsAnalyzing(true)
 
-    // Simulate analysis delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    // Small delay for UX
+    await new Promise((resolve) => setTimeout(resolve, 500))
 
     const fbtValue = parseFloat(formData.fbtValue) || 0
-    let residualValue = parseFloat(formData.residualValue) || 0
+    const residualValue = parseFloat(formData.residualValue) || 0
     const financePayment = parseFloat(formData.financePayment) || 0
-    const leaseTerm = parseInt(formData.leaseTerm) || 5
+    const leaseTerm = parseInt(formData.leaseTerm) || 3
     const shownRate = parseFloat(formData.shownRate) || 0
 
-    // Adjust residual if includes GST
-    if (formData.balloonIncludesGST) {
-      residualValue = residualValue / 1.1
-    }
+    // Use the proper IRR-based analysis
+    const analysis = analyzeLeaseQuote({
+      fbtValue,
+      financePayment,
+      paymentFrequency: formData.paymentFrequency,
+      residualValue,
+      balloonIncludesGST: formData.balloonIncludesGST,
+      leaseTerm,
+      shownRate,
+      paymentDeferral: 2, // Always default to 2 months
+      state: formData.state,
+    })
 
-    // Calculate periods per year
-    const periodsPerYear = formData.paymentFrequency === 'monthly' ? 12 :
-      formData.paymentFrequency === 'fortnightly' ? 26 : 52
-
-    // Calculate annual finance payment
-    const annualPayment = financePayment * periodsPerYear
-
-    // Estimate drive-away price (FBT value + ~5% on-road)
-    const estimatedDriveAway = fbtValue * 1.05
-
-    // Calculate implied NAF
-    // Using reverse engineering from payment
-    const monthlyRate = 0.075 / 12 // Assume 7.5% baseline
-    const termMonths = leaseTerm * 12
-    const repayments = termMonths - 1 // 1 month deferral
-
-    // Reverse calculate NAF from payment and balloon
-    const factor = Math.pow(1 + monthlyRate, repayments)
-    const impliedNAF = ((financePayment * 12 / 12) * (1 - 1/factor) + (residualValue * monthlyRate / factor)) / monthlyRate
-    const impliedNAFAdjusted = impliedNAF / Math.pow(1 + monthlyRate, 1)
-
-    // Calculate implied rate (simplified)
-    const totalPayments = annualPayment * leaseTerm
-    const totalInterest = totalPayments + residualValue - estimatedDriveAway
-    const avgBalance = (estimatedDriveAway + residualValue) / 2
-    const impliedRate = (totalInterest / avgBalance / leaseTerm) * 100
-
-    // Compare to minimum residual
-    const minResidualPercent = BALLOON_PERCENTS[leaseTerm] || 0.28
-    const minResidual = fbtValue * minResidualPercent
-    const residualDiff = residualValue - minResidual
-
-    // Calculate millarX comparison
-    const millarxRate = 7.5
-    const rateDifference = shownRate > 0 ? shownRate - millarxRate : impliedRate - millarxRate
-    const isRateHigh = rateDifference > 1
-
-    // Generate issues
-    const issues = []
-
-    if (isRateHigh && rateDifference > 0) {
-      issues.push({
-        severity: 'high',
-        title: 'Finance rate appears high',
-        description: `${shownRate > 0 ? shownRate.toFixed(2) : impliedRate.toFixed(2)}% vs market rate of ~${millarxRate}%`,
-        estimatedCost: rateDifference * estimatedDriveAway * leaseTerm / 100,
-      })
-    }
-
-    if (residualDiff < -500) {
-      issues.push({
-        severity: 'medium',
-        title: 'Residual below ATO minimum',
-        description: `${formatCurrency(residualValue)} vs minimum ${formatCurrency(minResidual)} - may trigger FBT`,
-        estimatedCost: Math.abs(residualDiff) * 0.3,
-      })
-    }
-
-    // Calculate potential savings
-    const potentialSavings = issues.reduce((sum, issue) => sum + issue.estimatedCost, 0)
-
-    // Determine rating
-    let rating = 'good'
-    if (issues.some((i) => i.severity === 'high')) {
-      rating = 'warning'
-    } else if (issues.length > 0) {
-      rating = 'caution'
-    }
+    // Calculate potential savings (difference from market rate)
+    const marketRate = 7.5
+    const rateDiff = Math.max(0, analysis.effectiveRate - marketRate)
+    const potentialSavings =
+      analysis.issues.reduce((sum, issue) => sum + (issue.estimatedCost || 0), 0) +
+      (rateDiff > 1 ? (rateDiff / 100) * analysis.amountFinanced * leaseTerm : 0)
 
     setResults({
-      rating,
-      score: rating === 'good' ? 9 : rating === 'caution' ? 6 : 3,
-      issues,
+      ...analysis,
       potentialSavings,
       comparison: {
-        theirRate: shownRate > 0 ? shownRate : impliedRate,
-        millarxRate,
-        theirPayment: financePayment,
-        millarxPayment: financePayment * (millarxRate / (shownRate > 0 ? shownRate : impliedRate)),
-        theirTotal: totalPayments + residualValue,
-        millarxTotal: (financePayment * (millarxRate / Math.max(impliedRate, millarxRate)) * periodsPerYear * leaseTerm) + residualValue,
-      },
-      residualAnalysis: {
-        provided: residualValue,
-        minimum: minResidual,
-        difference: residualDiff,
-        isCompliant: residualDiff >= -100,
+        theirRate: analysis.effectiveRate,
+        millarxRate: marketRate,
       },
     })
 
     setIsAnalyzing(false)
   }
 
-  const hiddenFees = [
+  const howWeHelp = [
     {
-      title: 'Admin Fees',
-      range: '$10-20/mth',
-      total: '= $720 over term',
+      title: 'Clarity',
+      description: 'Understand what\'s actually in your quote',
+      detail: 'Make informed decisions',
     },
     {
-      title: 'Inflated Rates',
-      range: '2-3% above market',
-      total: 'Thousands extra',
+      title: 'Negotiation',
+      description: 'Get the best deal from your provider',
+      detail: 'Armed with the right questions',
     },
     {
-      title: 'Excessive Insurance',
-      range: '+$500/yr',
-      total: 'Overpriced cover',
+      title: 'Transparency',
+      description: 'See what\'s being financed',
+      detail: 'When providers make it hard',
     },
     {
-      title: 'Exit Penalties',
-      range: 'Up to $2,000',
-      total: 'Hidden fees',
+      title: 'Confidence',
+      description: 'Know you\'re getting a fair deal',
+      detail: 'Before you sign',
     },
   ]
 
@@ -193,407 +125,504 @@ export default function LeaseAnalysis() {
         <BlurCircle color="purple" size="xl" className="top-0 right-0 translate-x-1/2 -translate-y-1/2" />
 
         {/* Hero Section */}
-      <section className="section-padding relative">
-        <div className="container-wide mx-auto text-center">
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="max-w-3xl mx-auto"
-          >
-            <motion.h1
-              variants={fadeInUp}
-              className="text-display-lg md:text-display-xl font-serif text-mx-slate-900 mb-6"
-            >
-              Is Your Novated Lease Quote{' '}
-              <span className="gradient-text">Actually a Good Deal?</span>
-            </motion.h1>
-
-            <motion.p
-              variants={fadeInUp}
-              className="text-body-lg text-mx-slate-600 mb-8 max-w-2xl mx-auto"
-            >
-              Analyse any competitor quote in 60 seconds.
-              We'll show you the hidden fees they don't want you to see.
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Analysis Tool */}
-      <section className="section-padding bg-white pt-0">
-        <div className="container-wide mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Input Form */}
+        <section className="section-padding relative">
+          <div className="container-wide mx-auto text-center">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="max-w-3xl mx-auto"
             >
-              <Card>
-                <h2 className="text-display-sm font-serif text-mx-slate-900 mb-6">
-                  Enter Quote Details
-                </h2>
+              <motion.h1
+                variants={fadeInUp}
+                className="text-display-lg md:text-display-xl font-serif text-mx-slate-900 mb-6"
+              >
+                Is Your Novated Lease Quote{' '}
+                <span className="gradient-text">Actually a Good Deal?</span>
+              </motion.h1>
 
-                <form onSubmit={analyzeQuote} className="space-y-5">
-                  <Input
-                    label="Provider Name"
-                    name="providerName"
-                    value={formData.providerName}
-                    onChange={handleChange}
-                    placeholder="e.g., SG Fleet, Maxxia, LeasePlan"
-                  />
-
-                  <Input
-                    label="Vehicle"
-                    name="vehicleDescription"
-                    value={formData.vehicleDescription}
-                    onChange={handleChange}
-                    placeholder="e.g., Tesla Model Y Long Range"
-                  />
-
-                  <Input
-                    label="FBT Base Value *"
-                    name="fbtValue"
-                    type="number"
-                    value={formData.fbtValue}
-                    onChange={handleChange}
-                    placeholder="54900"
-                    prefix="$"
-                    required
-                    helperText="Always shown on quotes as 'FBT Base Value'"
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <Input
-                      label="Finance Payment *"
-                      name="financePayment"
-                      type="number"
-                      value={formData.financePayment}
-                      onChange={handleChange}
-                      placeholder="862"
-                      prefix="$"
-                      required
-                    />
-                    <Select
-                      label="Frequency"
-                      name="paymentFrequency"
-                      value={formData.paymentFrequency}
-                      onChange={handleChange}
-                      options={[
-                        { value: 'monthly', label: 'Monthly' },
-                        { value: 'fortnightly', label: 'Fortnightly' },
-                        { value: 'weekly', label: 'Weekly' },
-                      ]}
-                    />
-                  </div>
-
-                  <Input
-                    label="Balloon/Residual *"
-                    name="residualValue"
-                    type="number"
-                    value={formData.residualValue}
-                    onChange={handleChange}
-                    placeholder="14956"
-                    prefix="$"
-                    required
-                    helperText="End of lease payment to keep the car"
-                  />
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="balloonIncludesGST"
-                      name="balloonIncludesGST"
-                      checked={formData.balloonIncludesGST}
-                      onChange={handleChange}
-                      className="w-4 h-4 rounded border-mx-slate-300 text-mx-purple-600 focus:ring-mx-purple-500"
-                    />
-                    <label htmlFor="balloonIncludesGST" className="text-body-sm text-mx-slate-600">
-                      This amount includes GST
-                    </label>
-                  </div>
-
-                  <Select
-                    label="Lease Term *"
-                    name="leaseTerm"
-                    value={formData.leaseTerm}
-                    onChange={handleChange}
-                    options={[
-                      { value: '1', label: '1 year' },
-                      { value: '2', label: '2 years' },
-                      { value: '3', label: '3 years' },
-                      { value: '4', label: '4 years' },
-                      { value: '5', label: '5 years' },
-                    ]}
-                  />
-
-                  <Input
-                    label="Shown Interest Rate (if any)"
-                    name="shownRate"
-                    type="number"
-                    step="0.01"
-                    value={formData.shownRate}
-                    onChange={handleChange}
-                    placeholder="7.21"
-                    suffix="% p.a."
-                    helperText="Enter if shown on your quote"
-                  />
-
-                  <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                    <AlertCircle className="text-amber-600 flex-shrink-0" size={20} />
-                    <p className="text-body-sm text-amber-700">
-                      This analyser focuses on fixed finance costs only. Variable items (fuel, maintenance) are excluded.
-                    </p>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    fullWidth
-                    size="lg"
-                    loading={isAnalyzing}
-                  >
-                    Analyse Quote
-                  </Button>
-                </form>
-              </Card>
-            </motion.div>
-
-            {/* Results */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              {results ? (
-                <Card>
-                  <h2 className="text-display-sm font-serif text-mx-slate-900 mb-6">
-                    Your Quote Rating
-                  </h2>
-
-                  {/* Rating Badge */}
-                  <div className="text-center mb-8">
-                    <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center text-white text-3xl font-bold ${
-                      results.rating === 'good' ? 'bg-gradient-to-br from-teal-500 to-teal-700' :
-                      results.rating === 'caution' ? 'bg-gradient-to-br from-amber-500 to-amber-700' :
-                      'bg-gradient-to-br from-red-500 to-red-700'
-                    }`}>
-                      {results.score}/10
-                    </div>
-                    <div className="mt-4">
-                      <RatingBadge rating={results.rating} />
-                    </div>
-                    {results.potentialSavings > 100 && (
-                      <p className="mt-2 text-body-lg text-mx-slate-700">
-                        Potential savings: <span className="font-bold text-mx-purple-700">{formatCurrency(results.potentialSavings)}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Issues Found */}
-                  {results.issues.length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="text-body-lg font-semibold text-mx-slate-800 mb-4">
-                        Issues Found
-                      </h3>
-                      <div className="space-y-3">
-                        {results.issues.map((issue, index) => (
-                          <div
-                            key={index}
-                            className={`p-4 rounded-lg border-2 ${
-                              issue.severity === 'high'
-                                ? 'bg-red-50 border-red-200'
-                                : 'bg-amber-50 border-amber-200'
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <AlertTriangle
-                                className={
-                                  issue.severity === 'high'
-                                    ? 'text-red-500'
-                                    : 'text-amber-500'
-                                }
-                                size={20}
-                              />
-                              <div>
-                                <p className="font-semibold text-mx-slate-800">
-                                  {issue.title}
-                                </p>
-                                <p className="text-body-sm text-mx-slate-600">
-                                  {issue.description}
-                                </p>
-                                {issue.estimatedCost > 100 && (
-                                  <p className="text-body-sm font-semibold text-red-600 mt-1">
-                                    Est. cost: {formatCurrency(issue.estimatedCost)}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {results.issues.length === 0 && (
-                    <div className="mb-8 p-4 bg-teal-50 border-2 border-teal-200 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="text-teal-600" size={24} />
-                        <div>
-                          <p className="font-semibold text-teal-800">
-                            Looking Good!
-                          </p>
-                          <p className="text-body-sm text-teal-600">
-                            No major issues detected with your quote.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Comparison Table */}
-                  <div className="mb-8">
-                    <h3 className="text-body-lg font-semibold text-mx-slate-800 mb-4">
-                      Quick Comparison
-                    </h3>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b-2 border-mx-slate-200">
-                            <th className="text-left py-2 px-3"></th>
-                            <th className="text-right py-2 px-3 text-body-sm text-mx-slate-600">
-                              Their Quote
-                            </th>
-                            <th className="text-right py-2 px-3 text-body-sm text-mx-purple-600">
-                              millarX
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-mx-slate-100">
-                          <tr>
-                            <td className="py-2 px-3 text-body text-mx-slate-600">
-                              Finance Rate
-                            </td>
-                            <td className="py-2 px-3 text-right font-mono font-semibold">
-                              {results.comparison.theirRate.toFixed(2)}%
-                            </td>
-                            <td className="py-2 px-3 text-right font-mono font-semibold text-mx-purple-700">
-                              {results.comparison.millarxRate}%
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* CTA */}
-                  <div className="space-y-3">
-                    <Button variant="primary" fullWidth>
-                      Get millarX Quote
-                    </Button>
-                    <Button variant="secondary" fullWidth>
-                      Download Report
-                    </Button>
-                  </div>
-                </Card>
-              ) : (
-                <Card className="h-full flex items-center justify-center min-h-[400px]">
-                  <div className="text-center text-mx-slate-500">
-                    <AlertCircle size={48} className="mx-auto mb-4 opacity-50" />
-                    <p className="text-body-lg">
-                      Enter your quote details to see the analysis
-                    </p>
-                  </div>
-                </Card>
-              )}
+              <motion.p
+                variants={fadeInUp}
+                className="text-body-lg text-mx-slate-600 mb-4 max-w-2xl mx-auto"
+              >
+                Helped 1000's of people get better deals with our honest deconstruction of quotes.
+              </motion.p>
+              <motion.p
+                variants={fadeInUp}
+                className="text-body text-mx-slate-500 max-w-2xl mx-auto"
+              >
+                Analyse any competitor quote in 60 seconds. We'll show you the hidden fees and extras they don't want you to see.
+              </motion.p>
             </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Common Hidden Fees */}
-      <section className="section-padding bg-mx-slate-50">
-        <div className="container-wide mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-display-md font-serif text-mx-slate-900 mb-4">
-              Common Hidden Fees We Find
-            </h2>
-          </motion.div>
+        {/* Analysis Tool */}
+        <section className="section-padding bg-white pt-0">
+          <div className="container-wide mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Input Form */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <Card>
+                  <h2 className="text-display-sm font-serif text-mx-slate-900 mb-6">
+                    Enter Quote Details
+                  </h2>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
-          >
-            {hiddenFees.map((fee, index) => (
-              <motion.div key={index} variants={staggerItem}>
-                <Card className="text-center h-full">
-                  <h3 className="text-body-lg font-semibold text-mx-slate-800 mb-2">
-                    {fee.title}
-                  </h3>
-                  <p className="text-display-sm font-mono text-mx-purple-700">
-                    {fee.range}
-                  </p>
-                  <p className="text-body-sm text-mx-slate-500 mt-2">
-                    {fee.total}
-                  </p>
+                  <form onSubmit={analyzeQuote} className="space-y-5">
+                    <Input
+                      label="Provider Name"
+                      name="providerName"
+                      value={formData.providerName}
+                      onChange={handleChange}
+                      placeholder="e.g., SG Fleet, Maxxia, LeasePlan"
+                    />
+
+                    <Input
+                      label="Vehicle"
+                      name="vehicleDescription"
+                      value={formData.vehicleDescription}
+                      onChange={handleChange}
+                      placeholder="e.g., Tesla Model Y Long Range"
+                    />
+
+                    <Select
+                      label="State/Territory *"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleChange}
+                      options={[
+                        { value: 'VIC', label: 'Victoria' },
+                        { value: 'NSW', label: 'New South Wales' },
+                        { value: 'QLD', label: 'Queensland' },
+                        { value: 'SA', label: 'South Australia' },
+                        { value: 'WA', label: 'Western Australia' },
+                        { value: 'TAS', label: 'Tasmania' },
+                        { value: 'NT', label: 'Northern Territory' },
+                        { value: 'ACT', label: 'Australian Capital Territory' },
+                      ]}
+                      helperText="Used for stamp duty calculation"
+                    />
+
+                    <Input
+                      label="FBT Base Value *"
+                      name="fbtValue"
+                      type="number"
+                      value={formData.fbtValue}
+                      onChange={handleChange}
+                      placeholder="54900"
+                      prefix="$"
+                      required
+                      helperText="Always shown on quotes as 'FBT Base Value'"
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <Input
+                        label="Finance Payment *"
+                        name="financePayment"
+                        type="number"
+                        step="0.01"
+                        value={formData.financePayment}
+                        onChange={handleChange}
+                        placeholder="862"
+                        prefix="$"
+                        required
+                      />
+                      <Select
+                        label="Frequency"
+                        name="paymentFrequency"
+                        value={formData.paymentFrequency}
+                        onChange={handleChange}
+                        options={[
+                          { value: 'monthly', label: 'Monthly' },
+                          { value: 'fortnightly', label: 'Fortnightly' },
+                          { value: 'weekly', label: 'Weekly' },
+                        ]}
+                      />
+                    </div>
+
+                    <Input
+                      label="Balloon/Residual *"
+                      name="residualValue"
+                      type="number"
+                      step="0.01"
+                      value={formData.residualValue}
+                      onChange={handleChange}
+                      placeholder="14956"
+                      prefix="$"
+                      required
+                      helperText="End of lease payment to keep the car"
+                    />
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="balloonIncludesGST"
+                        name="balloonIncludesGST"
+                        checked={formData.balloonIncludesGST}
+                        onChange={handleChange}
+                        className="w-4 h-4 rounded border-mx-slate-300 text-mx-purple-600 focus:ring-mx-purple-500"
+                      />
+                      <label htmlFor="balloonIncludesGST" className="text-body-sm text-mx-slate-600">
+                        This amount includes GST
+                      </label>
+                    </div>
+
+                    <Select
+                      label="Lease Term *"
+                      name="leaseTerm"
+                      value={formData.leaseTerm}
+                      onChange={handleChange}
+                      options={[
+                        { value: '1', label: '1 year' },
+                        { value: '2', label: '2 years' },
+                        { value: '3', label: '3 years' },
+                        { value: '4', label: '4 years' },
+                        { value: '5', label: '5 years' },
+                      ]}
+                    />
+
+                    <Input
+                      label="Shown Interest Rate (if any)"
+                      name="shownRate"
+                      type="number"
+                      step="0.01"
+                      value={formData.shownRate}
+                      onChange={handleChange}
+                      placeholder="7.21"
+                      suffix="% p.a."
+                      helperText="Enter if shown on your quote"
+                    />
+
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-body-sm text-blue-700">
+                        <strong>Estimation Tool:</strong> This tool helps you understand your quote and ask the right questions. Results are estimates based on typical market conditions.
+                      </p>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      fullWidth
+                      size="lg"
+                      loading={isAnalyzing}
+                    >
+                      Analyse Quote
+                    </Button>
+                  </form>
                 </Card>
               </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Lease Rescue CTA */}
-      <section className="section-padding bg-gradient-to-br from-red-600 to-red-800 text-white">
-        <div className="container-narrow mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-display-md font-serif mb-4">
-              Need Help Negotiating?
-            </h2>
-            <p className="text-body-lg text-red-100 mb-6">
-              Our Lease Rescue service includes:
-            </p>
-            <ul className="text-left max-w-md mx-auto space-y-3 mb-8">
-              <li className="flex items-center gap-3">
-                <CheckCircle size={20} />
-                <span>1:1 consultation call</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle size={20} />
-                <span>We negotiate with your current provider</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle size={20} />
-                <span>Formal quotes from 3+ lenders</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle size={20} />
-                <span>Full recommendation report</span>
-              </li>
-            </ul>
-            <p className="text-2xl font-bold mb-6">
-              $149 — or FREE if you lease with millarX
-            </p>
-            <Button
-              size="lg"
-              className="bg-white text-red-700 hover:bg-red-50"
+              {/* Results */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                {results ? (
+                  <Card>
+                    <h2 className="text-display-sm font-serif text-mx-slate-900 mb-6">
+                      Your Quote Rating
+                    </h2>
+
+                    {/* Rating Badge */}
+                    <div className="text-center mb-8">
+                      <div
+                        className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center text-white text-3xl font-bold ${
+                          results.rating === 'good'
+                            ? 'bg-gradient-to-br from-teal-500 to-teal-700'
+                            : results.rating === 'caution'
+                            ? 'bg-gradient-to-br from-amber-500 to-amber-700'
+                            : 'bg-gradient-to-br from-red-500 to-red-700'
+                        }`}
+                      >
+                        {results.score}/10
+                      </div>
+                      <div className="mt-4">
+                        <RatingBadge rating={results.rating} />
+                      </div>
+                    </div>
+
+                    {/* Key Metrics */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div
+                        className={`p-4 rounded-lg ${
+                          results.effectiveRate > 10
+                            ? 'bg-red-50 border-2 border-red-200'
+                            : results.effectiveRate > 8.5
+                            ? 'bg-amber-50 border-2 border-amber-200'
+                            : 'bg-teal-50 border-2 border-teal-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <TrendingUp size={16} className="text-mx-slate-500" />
+                          <span className="text-body-sm text-mx-slate-600">Effective Rate</span>
+                        </div>
+                        <p className="text-display-sm font-mono font-bold">
+                          {results.effectiveRate > 12
+                            ? '12%+'
+                            : results.effectiveRate > 10
+                            ? '10-12%'
+                            : results.effectiveRate > 8.5
+                            ? '8-10%'
+                            : '7-8.5%'}
+                        </p>
+                        <p className="text-body-sm text-mx-slate-500">
+                          {results.effectiveRate > 10
+                            ? 'Above market range'
+                            : results.effectiveRate > 8.5
+                            ? 'Above average'
+                            : 'Competitive'}
+                        </p>
+                      </div>
+
+                      <div
+                        className={`p-4 rounded-lg ${
+                          results.insuranceDetection?.detected
+                            ? 'bg-red-50 border-2 border-red-200'
+                            : 'bg-teal-50 border-2 border-teal-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Shield size={16} className="text-mx-slate-500" />
+                          <span className="text-body-sm text-mx-slate-600">Extras/Insurance</span>
+                        </div>
+                        <p className="text-display-sm font-mono font-bold">
+                          {results.insuranceDetection?.detected ? 'Likely' : 'Clean'}
+                        </p>
+                        <p className="text-body-sm text-mx-slate-500">
+                          {results.insuranceDetection?.detected
+                            ? 'Worth investigating'
+                            : 'No extras detected'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Issues Found */}
+                    {results.issues.length > 0 && (
+                      <div className="mb-8">
+                        <h3 className="text-body-lg font-semibold text-mx-slate-800 mb-4">
+                          Things to Investigate
+                        </h3>
+                        <div className="space-y-3">
+                          {results.issues.map((issue, index) => (
+                            <div
+                              key={index}
+                              className={`p-4 rounded-lg border-2 ${
+                                issue.severity === 'high'
+                                  ? 'bg-red-50 border-red-200'
+                                  : 'bg-amber-50 border-amber-200'
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <AlertTriangle
+                                  className={
+                                    issue.severity === 'high' ? 'text-red-500' : 'text-amber-500'
+                                  }
+                                  size={20}
+                                />
+                                <div>
+                                  <p className="font-semibold text-mx-slate-800">{issue.title}</p>
+                                  <p className="text-body-sm text-mx-slate-600">
+                                    {issue.description}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {results.issues.length === 0 && (
+                      <div className="mb-8 p-4 bg-teal-50 border-2 border-teal-200 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <CheckCircle className="text-teal-600" size={24} />
+                          <div>
+                            <p className="font-semibold text-teal-800">Looking Good!</p>
+                            <p className="text-body-sm text-teal-600">
+                              No major issues detected with your quote.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Questions to Ask Your Provider */}
+                    <div className="mb-8 p-4 bg-purple-50 border-2 border-purple-200 rounded-lg">
+                      <h3 className="text-body-lg font-semibold text-purple-800 mb-3">
+                        Questions to Ask Your Provider
+                      </h3>
+                      <ul className="space-y-2 text-body-sm text-purple-700">
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-500 mt-1">•</span>
+                          <span>What is the total amount financed?</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-500 mt-1">•</span>
+                          <span>What products are included in the financing (insurance, gap cover, warranties)?</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-500 mt-1">•</span>
+                          <span>What is the effective interest rate on the finance component only?</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-purple-500 mt-1">•</span>
+                          <span>Can I see a breakdown of all costs included in the lease?</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* Quick Summary */}
+                    <div className="mb-8 p-4 bg-mx-slate-50 rounded-lg">
+                      <h3 className="text-body-lg font-semibold text-mx-slate-800 mb-3">
+                        What This Means
+                      </h3>
+                      <p className="text-body text-mx-slate-600">
+                        {results.effectiveRate > 10
+                          ? 'Your quote appears to have a higher than average interest rate. This could indicate additional products or fees bundled into the financing. We recommend asking your provider for a detailed breakdown.'
+                          : results.effectiveRate > 8.5
+                          ? 'Your quote is in the higher end of the market range. There may be room to negotiate or you could get a better rate elsewhere.'
+                          : 'Your quote appears competitive. The rate is within typical market range.'}
+                      </p>
+                      {results.insuranceDetection?.detected && (
+                        <p className="text-body text-mx-slate-600 mt-2">
+                          Our analysis suggests there may be extras (insurance, gap cover, etc.) included in the financing. Ask your provider what's included.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* CTA */}
+                    <div className="space-y-3">
+                      <Button variant="primary" fullWidth>
+                        Get millarX Quote
+                      </Button>
+                      <Button variant="secondary" fullWidth>
+                        Download Report
+                      </Button>
+                    </div>
+                  </Card>
+                ) : (
+                  <Card className="h-full flex items-center justify-center min-h-[400px]">
+                    <div className="text-center text-mx-slate-500">
+                      <AlertCircle size={48} className="mx-auto mb-4 opacity-50" />
+                      <p className="text-body-lg">Enter your quote details to see the analysis</p>
+                    </div>
+                  </Card>
+                )}
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* How We Help */}
+        <section className="section-padding bg-mx-slate-50">
+          <div className="container-wide mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
             >
-              Book Lease Rescue
-            </Button>
-          </motion.div>
-        </div>
-      </section>
+              <h2 className="text-display-md font-serif text-mx-slate-900 mb-4">
+                How We Help
+              </h2>
+            </motion.div>
+
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+              {howWeHelp.map((item, index) => (
+                <motion.div key={index} variants={staggerItem}>
+                  <Card className="text-center h-full">
+                    <h3 className="text-body-lg font-semibold text-mx-purple-700 mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-body text-mx-slate-700">{item.description}</p>
+                    <p className="text-body-sm text-mx-slate-500 mt-2">{item.detail}</p>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Lease Rescue CTA */}
+        <section className="section-padding bg-gradient-to-b from-mx-purple-700 via-mx-purple-800 to-mx-slate-900 text-white">
+          <div className="container-narrow mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-display-md font-serif mb-4">Want the Full Picture?</h2>
+              <p className="text-body-lg text-purple-200 mb-6">
+                Get a forensic breakdown of your quote with exact figures, not estimates.
+              </p>
+              <ul className="text-left max-w-md mx-auto space-y-3 mb-8">
+                <li className="flex items-center gap-3">
+                  <CheckCircle size={20} className="text-teal-400" />
+                  <span><strong>Exact rate calculation</strong> — no more guessing</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle size={20} className="text-teal-400" />
+                  <span><strong>Line-by-line breakdown</strong> of what's financed</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle size={20} className="text-teal-400" />
+                  <span><strong>Comparison quotes</strong> from multiple lenders</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <CheckCircle size={20} className="text-teal-400" />
+                  <span><strong>Negotiation scripts</strong> to get a better deal</span>
+                </li>
+              </ul>
+              <div className="bg-white/10 backdrop-blur rounded-lg p-6 mb-8 max-w-md mx-auto">
+                <p className="text-3xl font-bold mb-2">$49</p>
+                <p className="text-purple-200 text-sm">or FREE if you end up leasing with millarX</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="https://buy.stripe.com/3cIfZjfFk7dkaScez43sI01"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button size="lg" variant="primary" className="bg-white text-mx-purple-700 hover:bg-purple-50 font-semibold px-8 py-4 text-lg">
+                    Get My Lease Rescue Pack
+                  </Button>
+                </a>
+              </div>
+              <p className="text-purple-300 text-sm mt-4">
+                After purchase, you'll receive instructions to send your quote for analysis
+              </p>
+              <div className="mt-10 pt-6 border-t border-purple-500/30">
+                <p className="text-purple-200 mb-3">Found this free tool helpful?</p>
+                <a
+                  href="https://g.page/r/Cd8Q0w5IqeYcEAE/review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-white hover:text-purple-200 underline underline-offset-2"
+                >
+                  Leave us a Google Review
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Footer Disclaimer */}
+        <section className="py-4 bg-mx-slate-100">
+          <div className="container-wide mx-auto text-center">
+            <p className="text-body-sm text-mx-slate-500">
+              This tool provides estimates only. Actual rates and amounts may vary. Always confirm details directly with your lease provider before signing any agreement.
+            </p>
+          </div>
+        </section>
       </div>
     </>
   )

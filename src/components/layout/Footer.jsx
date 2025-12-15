@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom'
 import { Mail, Phone, Globe, MapPin } from 'lucide-react'
 import { FOOTER_LINKS, COMPANY } from '../../lib/constants'
-import { getMediaUrl, MEDIA } from '../../lib/supabase'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
-  const logoWhiteUrl = getMediaUrl(MEDIA.logoWhite)
 
   return (
     <footer className="bg-mx-slate-900 text-white">
@@ -15,13 +13,9 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-4">
-              {logoWhiteUrl ? (
-                <img src={logoWhiteUrl} alt="millarX" className="h-10 w-auto" />
-              ) : (
-                <span className="text-3xl font-serif text-white tracking-tight">
-                  millar<span className="text-mx-purple-400">X</span>
-                </span>
-              )}
+              <span className="text-3xl font-serif text-white tracking-tight">
+                millar<span className="text-mx-purple-400">X</span>
+              </span>
             </Link>
             <p className="text-mx-slate-400 text-body mb-6 max-w-md">
               Transparent novated leasing without the hidden costs.

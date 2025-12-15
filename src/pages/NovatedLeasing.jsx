@@ -3,7 +3,6 @@ import { ArrowDown, Search, DollarSign, Zap } from 'lucide-react'
 import Calculator from '../components/calculator/Calculator'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
-import TrustBadges from '../components/shared/TrustBadges'
 import BlurCircle from '../components/shared/BlurCircle'
 import SEO from '../components/shared/SEO'
 import GoogleReviews from '../components/shared/GoogleReviews'
@@ -102,9 +101,6 @@ export default function NovatedLeasing() {
               </Button>
             </motion.div>
 
-            <motion.div variants={fadeInUp} className="mt-8">
-              <TrustBadges />
-            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -243,7 +239,8 @@ export default function NovatedLeasing() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
-                className="bg-mx-purple-100 text-mx-purple-700 hover:bg-white"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-mx-purple-700"
                 onClick={() => scrollToElement('calculator')}
               >
                 Get a Formal Quote

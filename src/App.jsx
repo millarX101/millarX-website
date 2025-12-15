@@ -10,6 +10,8 @@ import Complaints from './pages/Complaints'
 import CreditGuide from './pages/CreditGuide'
 import RedditExclusive from './pages/RedditExclusive'
 import BrowseEVs from './pages/BrowseEVs'
+import LeaseRescueUpload from './pages/LeaseRescueUpload'
+import AboutUs from './pages/AboutUs'
 
 function App() {
   return (
@@ -27,10 +29,14 @@ function App() {
           <Route path="/complaints" element={<Complaints />} />
           <Route path="/credit-guide" element={<CreditGuide />} />
           <Route path="/browse-evs" element={<BrowseEVs />} />
+          <Route path="/about" element={<AboutUs />} />
         </Route>
 
         {/* Reddit exclusive page - no nav, minimal layout */}
         <Route path="/redditnl" element={<RedditExclusive />} />
+
+        {/* Lease Rescue Upload - standalone page after purchase */}
+        <Route path="/lease-rescue/upload" element={<LeaseRescueUpload />} />
 
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/novated-leasing" replace />} />

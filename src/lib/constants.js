@@ -134,6 +134,7 @@ export const NAV_LINKS = [
   { path: '/novated-leasing', label: 'Novated Leasing' },
   { path: '/lease-analysis', label: 'Lease Analysis' },
   { path: '/employers', label: 'Employers' },
+  { path: '/about', label: 'About' },
   { path: '/contact', label: 'Contact' }
 ]
 

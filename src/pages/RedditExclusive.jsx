@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { MessageCircle, Shield, Eye, ThumbsUp } from 'lucide-react'
-import Calculator from '../components/calculator/Calculator'
+import { Shield, Eye, ThumbsUp, ExternalLink, Wrench } from 'lucide-react'
+import BYOCalculator from '../components/calculator/BYOCalculator'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import { Accordion, AccordionItem } from '../components/ui/Accordion'
@@ -207,25 +207,102 @@ The calculator assumes GST-claimable (dealer purchase). If buying private, your 
         </div>
       </section>
 
-      {/* Calculator */}
-      <section className="px-4 py-16 bg-mx-ivory">
+      {/* Community Resources */}
+      <section className="px-4 py-12 bg-mx-slate-50">
         <div className="container-wide mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-8"
           >
-            <h2 className="text-display-md font-serif text-mx-slate-900 mb-4">
-              The Calculator
+            <h2 className="text-display-sm font-serif text-mx-slate-900 mb-4">
+              Community Resources
             </h2>
-            <p className="text-body-lg text-mx-slate-600 max-w-2xl mx-auto">
-              Same as the main site, but defaults to showing all options. Because
-              Reddit users want the details.
-            </p>
           </motion.div>
 
-          <Calculator source="reddit" showAdvanced={true} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Card className="max-w-2xl mx-auto">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                  <ExternalLink className="text-orange-600" size={24} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-mx-slate-900 mb-2">
+                    AusFinance Deep Dive on Novated Leasing
+                  </h3>
+                  <p className="text-body text-mx-slate-600 mb-3">
+                    AusFinance OG <strong>u/Changyanf1230</strong> takes a deep dive into novated leasing,
+                    considering a lot of variables. Good if you love the nitty gritty.
+                  </p>
+                  <a
+                    href="https://www.reddit.com/r/AusFinance/comments/1c5b9xx/ev_and_ice_novated_lease_calculator/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-mx-purple-600 hover:text-mx-purple-700 font-semibold transition-colors"
+                  >
+                    Read the post on r/AusFinance
+                    <ExternalLink size={16} />
+                  </a>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* BYO Finance Calculator */}
+      <section id="calculator" className="px-4 py-16 bg-mx-ivory">
+        <div className="container-wide mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-8"
+          >
+            <h2 className="text-display-md font-serif text-mx-slate-900 mb-4">
+              BYO Finance Comparison Calculator
+            </h2>
+            <p className="text-body-lg text-mx-slate-600 max-w-3xl mx-auto mb-6">
+              Compare your existing novated lease quote against our BYO finance solution.
+              All variables are adjustable - because Reddit users want the details.
+            </p>
+
+            {/* How BYO Works */}
+            <div className="max-w-3xl mx-auto text-left">
+              <Card className="bg-gradient-to-br from-teal-50 to-blue-50 border-teal-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center">
+                    <Wrench className="text-white" size={20} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-mx-slate-900">How BYO Finance Works</h3>
+                </div>
+                <ol className="space-y-3 text-body text-mx-slate-700">
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500 text-white text-sm font-bold flex items-center justify-center">1</span>
+                    <span><strong>Get a millarX finance approval</strong> at our fixed rates.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500 text-white text-sm font-bold flex items-center justify-center">2</span>
+                    <span><strong>Ask your salary-packaging provider</strong> to set up a self-managed novated lease (you supply the finance approval; they handle payroll deductions and reimbursements).</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-500 text-white text-sm font-bold flex items-center justify-center">3</span>
+                    <span><strong>Novation & settlement</strong> — we coordinate the novation deed and payout; you start deductions from your next pay cycle.</span>
+                  </li>
+                </ol>
+                <p className="mt-4 text-body-sm text-mx-slate-600 bg-white/50 p-3 rounded-lg">
+                  <strong>Tip:</strong> This is about finance only. Your provider still administers payroll and reimbursements.
+                </p>
+              </Card>
+            </div>
+          </motion.div>
+
+          <BYOCalculator />
         </div>
       </section>
 
