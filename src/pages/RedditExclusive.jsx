@@ -168,12 +168,24 @@ The calculator assumes GST-claimable (dealer purchase). If buying private, your 
             </motion.h1>
             <motion.p
               variants={fadeInUp}
-              className="text-body-lg text-mx-slate-600 max-w-2xl mx-auto"
+              className="text-body-lg text-mx-slate-600 max-w-2xl mx-auto mb-6"
             >
               No sales BS. No kickbacks. Just a transparent novated lease
               calculator built by someone who got sick of the industry's hidden
               fees.
             </motion.p>
+
+            {/* Beat the Fleece */}
+            <motion.div
+              variants={fadeInUp}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-100 to-red-50 border border-orange-200 px-6 py-3 rounded-full"
+            >
+              <span className="text-2xl">🐑</span>
+              <span className="text-body-lg font-semibold text-orange-700">
+                Don't get fleeced — beat the fleece with millarX
+              </span>
+              <span className="text-2xl">💪</span>
+            </motion.div>
           </motion.div>
         </div>
       </section>

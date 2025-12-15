@@ -138,6 +138,16 @@ export default function AboutUs() {
                     isn't necessary. Avoid the fee creep and high undisclosed interest rates by letting our
                     platform guide your own leasing journey — on your terms, at your pace.
                   </p>
+
+                  {/* 20% Savings Stat */}
+                  <div className="bg-gradient-to-r from-mx-purple-100 to-teal-50 p-6 rounded-2xl border border-mx-purple-200">
+                    <p className="text-display-sm font-serif text-mx-purple-700 mb-2">
+                      On average, we put an extra <span className="text-display-md">20%</span> savings back into employees' pockets.
+                    </p>
+                    <p className="text-body text-mx-slate-600">
+                      That's what happens when you cut out the hidden fees, inflated margins, and unnecessary add-ons.
+                    </p>
+                  </div>
                 </div>
               </motion.div>
             </div>

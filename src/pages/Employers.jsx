@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   CheckCircle,
@@ -15,9 +16,50 @@ import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
 import BlurCircle from '../components/shared/BlurCircle'
 import SEO, { localBusinessSchema } from '../components/shared/SEO'
+import { saveEmployerInquiry } from '../lib/supabase'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 
 export default function Employers() {
+  const [formData, setFormData] = useState({
+    companyName: '',
+    contactName: '',
+    email: '',
+    phone: '',
+    employeeCount: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState(null)
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    try {
+      await saveEmployerInquiry({
+        company_name: formData.companyName,
+        contact_name: formData.contactName,
+        email: formData.email,
+        phone: formData.phone || null,
+        employee_count: formData.employeeCount,
+        source_page: '/employers',
+        created_at: new Date().toISOString(),
+      })
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Error submitting employer inquiry:', err)
+      setError('Something went wrong. Please try again or email us directly.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const benefits = [
     {
       icon: Zap,
@@ -163,35 +205,67 @@ export default function Employers() {
               transition={{ delay: 0.2 }}
             >
               <Card>
+                {submitted ? (
+                  <div className="text-center py-8">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                      className="w-16 h-16 mx-auto mb-4 rounded-full bg-teal-100 flex items-center justify-center"
+                    >
+                      <CheckCircle className="text-teal-600" size={32} />
+                    </motion.div>
+                    <h3 className="text-display-sm font-serif text-mx-slate-900 mb-2">
+                      Thanks for your interest!
+                    </h3>
+                    <p className="text-body text-mx-slate-600">
+                      We'll be in touch within 24 hours to discuss how millarX can benefit your team.
+                    </p>
+                  </div>
+                ) : (
+                  <>
                 <h3 className="text-display-sm font-serif text-mx-slate-900 mb-6">
                   Get in Touch
                 </h3>
-                <form className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <Input
                     label="Company Name"
                     name="companyName"
+                    value={formData.companyName}
+                    onChange={handleChange}
                     placeholder="Company Pty Ltd"
+                    required
                   />
                   <Input
                     label="Your Name"
                     name="contactName"
+                    value={formData.contactName}
+                    onChange={handleChange}
                     placeholder="Jane Smith"
+                    required
                   />
                   <Input
                     label="Email"
                     name="email"
                     type="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     placeholder="jane@company.com"
+                    required
                   />
                   <Input
                     label="Phone (optional)"
                     name="phone"
                     type="tel"
+                    value={formData.phone}
+                    onChange={handleChange}
                     placeholder="0400 000 000"
                   />
                   <Select
                     label="Number of Employees"
                     name="employeeCount"
+                    value={formData.employeeCount}
+                    onChange={handleChange}
                     options={[
                       { value: '', label: 'Select...' },
                       { value: '1-50', label: '1-50' },
@@ -200,10 +274,15 @@ export default function Employers() {
                       { value: '500+', label: '500+' },
                     ]}
                   />
-                  <Button type="submit" variant="primary" fullWidth>
+                  {error && (
+                    <p className="text-red-600 text-body-sm">{error}</p>
+                  )}
+                  <Button type="submit" variant="primary" fullWidth loading={loading}>
                     Submit Inquiry
                   </Button>
                 </form>
+                  </>
+                )}
               </Card>
             </motion.div>
           </div>

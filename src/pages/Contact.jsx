@@ -20,6 +20,7 @@ export default function Contact() {
   })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState(null)
 
   const inquiryOptions = [
     { value: '', label: 'Select inquiry type...' },
@@ -37,18 +38,19 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setError(null)
 
     try {
-      await saveContactSubmission({
+      const { error: submitError } = await saveContactSubmission({
         ...formData,
         source_page: '/contact',
         created_at: new Date().toISOString(),
       })
+      if (submitError) throw submitError
       setSubmitted(true)
     } catch (err) {
       console.error('Error submitting form:', err)
-      // Still show success as fallback
-      setSubmitted(true)
+      setError('Something went wrong. Please try again or email us directly at info@millarx.com.au')
     } finally {
       setLoading(false)
     }
@@ -239,6 +241,10 @@ export default function Contact() {
                     required
                   />
                 </div>
+
+                {error && (
+                  <p className="text-red-600 text-body-sm">{error}</p>
+                )}
 
                 <Button
                   type="submit"
