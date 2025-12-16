@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Mail, Phone, Globe, Send, CheckCircle } from 'lucide-react'
 import Card from '../components/ui/Card'
@@ -82,11 +83,14 @@ export default function Contact() {
               Message Sent!
             </h2>
             <p className="text-body-lg text-mx-slate-600 mb-6">
-              Thanks for reaching out. We'll get back to you within 24 hours.
+              Thanks for reaching out. We'll respond to your enquiry as soon as possible.
             </p>
-            <Button as="a" href="/">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 bg-mx-purple-700 text-white hover:bg-mx-purple-600 px-6 py-3"
+            >
               Back to Home
-            </Button>
+            </Link>
           </Card>
         </div>
       </div>
