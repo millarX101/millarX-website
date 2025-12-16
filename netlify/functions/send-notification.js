@@ -1,5 +1,7 @@
 // Netlify serverless function to send email notifications for all lead types
-// Uses Resend email service
+// Uses Gmail SMTP via Nodemailer
+
+const nodemailer = require('nodemailer')
 
 exports.handler = async (event, context) => {
   // Handle preflight
@@ -25,11 +27,13 @@ exports.handler = async (event, context) => {
 
   try {
     const data = JSON.parse(event.body)
-    const RESEND_API_KEY = process.env.RESEND_API_KEY
 
-    // If no Resend API key, log and return success (don't block form submission)
-    if (!RESEND_API_KEY) {
-      console.log('No RESEND_API_KEY configured. Email notification skipped.')
+    const GMAIL_USER = process.env.GMAIL_USER
+    const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD
+
+    // If no Gmail credentials, log and return success (don't block form submission)
+    if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
+      console.log('Gmail credentials not configured. Email notification skipped.')
       console.log('Lead data:', JSON.stringify(data, null, 2))
       return {
         statusCode: 200,
@@ -37,6 +41,15 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ message: 'Lead saved (email notification not configured)' }),
       }
     }
+
+    // Create Gmail transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: GMAIL_USER,
+        pass: GMAIL_APP_PASSWORD,
+      },
+    })
 
     // Determine lead type and format email accordingly
     const leadType = data.lead_type || 'contact'
@@ -61,31 +74,14 @@ exports.handler = async (event, context) => {
         emailHtml = formatGenericEmail(data)
     }
 
-    // Send via Resend API
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'millarX Website <notifications@millarx.com.au>',
-        to: ['ben@millarx.com.au'],
-        subject: subject,
-        html: emailHtml,
-        reply_to: data.email,
-      }),
+    // Send email
+    await transporter.sendMail({
+      from: `millarX Website <${GMAIL_USER}>`,
+      to: 'ben@millarx.com.au',
+      subject: subject,
+      html: emailHtml,
+      replyTo: data.email,
     })
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Resend API error:', errorText)
-      return {
-        statusCode: 200,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ message: 'Lead saved (email notification failed)' }),
-      }
-    }
 
     return {
       statusCode: 200,
