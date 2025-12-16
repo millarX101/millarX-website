@@ -170,7 +170,7 @@ export const COMPANY = {
   contact: {
     phone: '0492 886 857',
     email: 'info@millarx.com.au',
-    complaintsEmail: 'complaints@millarx.com.au',
+    complaintsEmail: 'info@millarx.com.au',
     website: 'www.millarx.com.au'
   },
   responsibleManager: 'Benjamin John Millar',
