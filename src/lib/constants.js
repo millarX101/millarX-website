@@ -161,12 +161,11 @@ export const COMPANY = {
   acn: '681 267 818',
   acl: '569484',
   address: {
-    street: '56 Liberty Parade',
     suburb: 'Ivanhoe',
     state: 'VIC',
     postcode: '3079',
     country: 'Australia',
-    full: '56 Liberty Parade, Ivanhoe VIC 3079'
+    full: 'Ivanhoe, VIC 3079'
   },
   contact: {
     phone: '0492 886 857',

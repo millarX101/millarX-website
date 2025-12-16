@@ -61,7 +61,6 @@ export const organizationSchema = {
   description: 'Transparent novated leasing broker in Australia. No hidden fees, no sales pressure.',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '56 Liberty Parade',
     addressLocality: 'Ivanhoe',
     addressRegion: 'VIC',
     postalCode: '3079',
@@ -88,7 +87,6 @@ export const localBusinessSchema = {
   email: 'info@millarx.com.au',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '56 Liberty Parade',
     addressLocality: 'Ivanhoe',
     addressRegion: 'VIC',
     postalCode: '3079',
