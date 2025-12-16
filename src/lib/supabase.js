@@ -80,18 +80,6 @@ export async function saveQuoteRequest(data) {
     console.error('Error forwarding to mxDriveIQ:', err)
   }
 
-  // Send email notification to Ben
-  try {
-    await fetch('/.netlify/functions/send-notification', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(mxDriveIQPayload),
-    })
-  } catch (err) {
-    // Don't fail the form submission if email notification fails
-    console.error('Error sending email notification:', err)
-  }
-
   return { data: null, error: null }
 }
 
@@ -184,23 +172,6 @@ export async function saveEmployerInquiry(data) {
     console.error('Error forwarding to mxDriveIQ:', err)
   }
 
-  // Send email notification to Ben
-  try {
-    await fetch('/.netlify/functions/send-notification', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...mxDriveIQPayload,
-        company_name: data.company_name,
-        contact_name: data.contact_name,
-        employee_count: data.employee_count,
-      }),
-    })
-  } catch (err) {
-    // Don't fail the form submission if email notification fails
-    console.error('Error sending email notification:', err)
-  }
-
   return { data: null, error: null }
 }
 
@@ -245,18 +216,6 @@ export async function saveContactSubmission(data) {
     }
   } catch (err) {
     console.error('Error forwarding to mxDriveIQ:', err)
-  }
-
-  // Send email notification to Ben
-  try {
-    await fetch('/.netlify/functions/send-notification', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(mxDriveIQPayload),
-    })
-  } catch (err) {
-    // Don't fail the form submission if email notification fails
-    console.error('Error sending email notification:', err)
   }
 
   return { data: null, error: null }
