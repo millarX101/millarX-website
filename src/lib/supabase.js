@@ -221,6 +221,42 @@ export async function saveContactSubmission(data) {
 export default supabase
 
 // ============================================
+// LEASE ANALYSIS DATA (for provider intelligence)
+// ============================================
+
+/**
+ * Save anonymous lease analysis data for pattern learning
+ * No email required - builds provider intelligence database
+ */
+export async function saveAnalysisData(data) {
+  if (!supabase) return { error: null }
+
+  const { error } = await supabase
+    .from('lease_analysis_data')
+    .insert([{
+      provider_name: data.providerName || null,
+      provider_normalized: data.providerName?.toLowerCase().trim() || null,
+      vehicle_description: data.vehicleDescription || null,
+      fbt_value: data.fbtValue || null,
+      residual_value: data.residualValue || null,
+      finance_payment: data.financePayment || null,
+      payment_frequency: data.paymentFrequency || null,
+      lease_term: data.leaseTerm || null,
+      state: data.state || null,
+      vehicle_type: data.vehicleType || null,
+      shown_rate: data.shownRate || null,
+      risk_level: data.riskLevel || null,
+      extras_detected: data.extrasDetected || false,
+    }])
+
+  if (error) {
+    console.error('Error saving analysis data:', error)
+  }
+
+  return { error }
+}
+
+// ============================================
 // EV CATALOG (from mxDriveIQ Supabase)
 // ============================================
 

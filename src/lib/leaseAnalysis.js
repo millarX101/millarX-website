@@ -431,22 +431,20 @@ export function analyzeLeaseQuote({
     rating = 'caution'
   }
 
-  // Build issues array (no residual warnings as per user request)
+  // Build issues array - WARNING ONLY, no specific numbers
   const issues = []
 
   if (effectiveRate > 10) {
     issues.push({
       severity: 'high',
       title: 'High Effective Interest Rate',
-      description: `Calculated effective rate of ${effectiveRate.toFixed(2)}% is above market range (7-8.5%)`,
-      estimatedCost: ((effectiveRate - 7.5) / 100) * amountFinanced * leaseTerm,
+      description: 'The effective rate appears significantly above competitive market range. Request a Lease Rescue Pack for exact calculation.',
     })
   } else if (effectiveRate > 8.5) {
     issues.push({
       severity: 'medium',
       title: 'Above Average Interest Rate',
-      description: `Effective rate of ${effectiveRate.toFixed(2)}% is above typical market rates`,
-      estimatedCost: ((effectiveRate - 7.5) / 100) * amountFinanced * leaseTerm,
+      description: 'The effective rate appears above typical market rates. Consider requesting a detailed breakdown from your provider.',
     })
   }
 
@@ -454,24 +452,19 @@ export function analyzeLeaseQuote({
     issues.push({
       severity: 'high',
       title: 'Possible Extras/Insurance Financed',
-      description: insuranceDetection.estimatedExtras
-        ? insuranceDetection.explanation
-        : insuranceDetection.explanation,
-      estimatedCost: insuranceDetection.estimatedExtras || 0,
+      description: 'Analysis suggests additional products (insurance, gap cover, warranties) may be financed into your lease. Request a Lease Rescue Pack for a detailed breakdown.',
     })
   } else if (hasHighRiskPacks) {
     issues.push({
       severity: 'high',
-      title: 'Excess Costs Financed',
-      description: `${formatCurrency(financingExcess)} excess above expected vehicle cost`,
-      estimatedCost: financingExcess,
+      title: 'Excess Costs Detected',
+      description: 'The amount financed appears higher than expected for this vehicle. Additional costs may be bundled in.',
     })
   } else if (hasMediumRiskPacks) {
     issues.push({
       severity: 'medium',
       title: 'Moderate Excess Detected',
-      description: `${formatCurrency(financingExcess)} above expected financing amount`,
-      estimatedCost: financingExcess,
+      description: 'There may be some additional costs bundled into the financing. Ask your provider for a line-by-line breakdown.',
     })
   }
 

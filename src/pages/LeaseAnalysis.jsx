@@ -17,6 +17,7 @@ import SEO, { createFAQSchema, localBusinessSchema } from '../components/shared/
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 import { formatCurrency } from '../lib/utils'
 import { analyzeLeaseQuote } from '../lib/leaseAnalysis'
+import { saveAnalysisData } from '../lib/supabase'
 
 // FAQ data for schema
 const leaseAnalysisFAQs = [
@@ -100,6 +101,22 @@ export default function LeaseAnalysis() {
         theirRate: analysis.effectiveRate,
         millarxRate: marketRate,
       },
+    })
+
+    // Save anonymous data for provider intelligence (no email required)
+    saveAnalysisData({
+      providerName: formData.providerName,
+      vehicleDescription: formData.vehicleDescription,
+      fbtValue: fbtValue,
+      residualValue: residualValue,
+      financePayment: financePayment,
+      paymentFrequency: formData.paymentFrequency,
+      leaseTerm: leaseTerm,
+      state: formData.state,
+      vehicleType: formData.vehicleType,
+      shownRate: shownRate || null,
+      riskLevel: analysis.rating,
+      extrasDetected: analysis.insuranceDetection?.detected || false,
     })
 
     setIsAnalyzing(false)
@@ -379,7 +396,16 @@ export default function LeaseAnalysis() {
                       </div>
                     </div>
 
-                    {/* Key Metrics */}
+                    {/* Disclaimer Banner */}
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-6">
+                      <p className="text-body-sm text-amber-800">
+                        <strong>Important:</strong> These are preliminary indicators based on industry patterns.
+                        Provider structures vary significantly. For exact figures and personalized analysis,
+                        request your <strong>Lease Rescue Pack</strong> below.
+                      </p>
+                    </div>
+
+                    {/* Key Metrics - Warnings Only, No Numbers */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       <div
                         className={`p-4 rounded-lg ${
@@ -392,23 +418,31 @@ export default function LeaseAnalysis() {
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <TrendingUp size={16} className="text-mx-slate-500" />
-                          <span className="text-body-sm text-mx-slate-600">Effective Rate</span>
+                          <span className="text-body-sm text-mx-slate-600">Rate Assessment</span>
                         </div>
-                        <p className="text-display-sm font-mono font-bold">
-                          {results.effectiveRate > 12
-                            ? '12%+'
+                        <p className={`text-lg font-bold ${
+                          results.effectiveRate > 12
+                            ? 'text-red-600'
                             : results.effectiveRate > 10
-                            ? '10-12%'
+                            ? 'text-red-500'
                             : results.effectiveRate > 8.5
-                            ? '8-10%'
-                            : '7-8.5%'}
+                            ? 'text-amber-600'
+                            : 'text-teal-600'
+                        }`}>
+                          {results.effectiveRate > 12
+                            ? '🚨 Very High Risk'
+                            : results.effectiveRate > 10
+                            ? '⚠️ High Risk'
+                            : results.effectiveRate > 8.5
+                            ? '⚡ Elevated'
+                            : '✓ Competitive'}
                         </p>
                         <p className="text-body-sm text-mx-slate-500">
                           {results.effectiveRate > 10
-                            ? 'Above market range'
+                            ? 'Significantly above market'
                             : results.effectiveRate > 8.5
-                            ? 'Above average'
-                            : 'Competitive'}
+                            ? 'Above typical range'
+                            : 'Within market range'}
                         </p>
                       </div>
 
@@ -423,13 +457,15 @@ export default function LeaseAnalysis() {
                           <Shield size={16} className="text-mx-slate-500" />
                           <span className="text-body-sm text-mx-slate-600">Extras/Insurance</span>
                         </div>
-                        <p className="text-display-sm font-mono font-bold">
-                          {results.insuranceDetection?.detected ? 'Likely' : 'Clean'}
+                        <p className={`text-lg font-bold ${
+                          results.insuranceDetection?.detected ? 'text-red-600' : 'text-teal-600'
+                        }`}>
+                          {results.insuranceDetection?.detected ? '⚠️ Likely Bundled' : '✓ Appears Clean'}
                         </p>
                         <p className="text-body-sm text-mx-slate-500">
                           {results.insuranceDetection?.detected
-                            ? 'Worth investigating'
-                            : 'No extras detected'}
+                            ? 'Additional products may be financed'
+                            : 'No bundled extras detected'}
                         </p>
                       </div>
                     </div>
