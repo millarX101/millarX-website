@@ -47,8 +47,8 @@ export default function CreditGuide() {
               deducts lease payments from your pre-tax salary
             </li>
             <li>
-              <strong>Consumer motor vehicle loans</strong> – for the purchase of vehicles for
-              personal use
+              <strong>Commercial vehicle finance</strong> – including chattel mortgages, finance
+              leases, and commercial hire purchase for business use vehicles
             </li>
           </ul>
           <p className="mb-4">Our credit assistance services include:</p>
