@@ -30,6 +30,24 @@ function getPaymentDeferral(providerName) {
   return isMillarXProvider(providerName) ? 1 : 2
 }
 
+/**
+ * Get rate thresholds based on lease term
+ * Shorter terms have higher rates because fixed costs spread over fewer months
+ */
+function getRateThresholds(leaseTerm) {
+  const term = parseInt(leaseTerm) || 3
+  if (term >= 5) {
+    // 5 year terms - lower rates expected
+    return { competitive: 8, elevated: 9.5, high: 11, veryHigh: 13 }
+  } else if (term >= 4) {
+    // 4 year terms
+    return { competitive: 8.5, elevated: 10, high: 11.5, veryHigh: 13.5 }
+  } else {
+    // 1-3 year terms - higher rates acceptable
+    return { competitive: 10, elevated: 11.5, high: 13, veryHigh: 15 }
+  }
+}
+
 // ============================================
 // IRR CALCULATION FUNCTIONS
 // ============================================
@@ -426,20 +444,24 @@ export function analyzeLeaseQuote({
   const hasMediumRiskPacks = financingExcess > mediumRiskThreshold && financingExcess <= highRiskThreshold
   const hasLowRiskPacks = financingExcess > lowRiskThreshold && financingExcess <= mediumRiskThreshold
 
-  // Calculate score
+  // Calculate score using term-adjusted thresholds
+  const thresholds = getRateThresholds(leaseTerm)
   let score = 10
   const penalties = []
 
-  // Rate-based penalties
-  if (effectiveRate > 12) {
+  // Rate-based penalties (term-adjusted)
+  if (effectiveRate > thresholds.veryHigh) {
     score = Math.min(score, 3)
     penalties.push('Extremely high effective rate')
-  } else if (effectiveRate > 10) {
+  } else if (effectiveRate > thresholds.high) {
     score = Math.min(score, 5)
     penalties.push('High effective rate')
-  } else if (effectiveRate > 8.5) {
+  } else if (effectiveRate > thresholds.elevated) {
     score -= 2
     penalties.push('Above average rate')
+  } else if (effectiveRate <= thresholds.competitive) {
+    // Bonus for competitive rate
+    score = Math.min(score + 1, 10)
   }
 
   // Excess financing penalties
@@ -465,13 +487,13 @@ export function analyzeLeaseQuote({
   // Build issues array - WARNING ONLY, no specific numbers
   const issues = []
 
-  if (effectiveRate > 10) {
+  if (effectiveRate > thresholds.high) {
     issues.push({
       severity: 'high',
       title: 'High Effective Interest Rate',
-      description: 'The effective rate appears significantly above competitive market range. Request a Lease Rescue Pack for exact calculation.',
+      description: 'The effective rate appears significantly above competitive market range for this term length. Request a Lease Rescue Pack for exact calculation.',
     })
-  } else if (effectiveRate > 8.5) {
+  } else if (effectiveRate > thresholds.elevated) {
     issues.push({
       severity: 'medium',
       title: 'Above Average Interest Rate',

@@ -19,6 +19,39 @@ import { formatCurrency } from '../lib/utils'
 import { analyzeLeaseQuote } from '../lib/leaseAnalysis'
 import { saveAnalysisData } from '../lib/supabase'
 
+// Term-based rate thresholds
+// Shorter terms have higher rates because fixed costs spread over fewer months
+const getRateThresholds = (leaseTerm) => {
+  const term = parseInt(leaseTerm) || 3
+  if (term >= 5) {
+    // 5 year terms - lower rates expected
+    return { competitive: 8, elevated: 9.5, high: 11, veryHigh: 13 }
+  } else if (term >= 4) {
+    // 4 year terms
+    return { competitive: 8.5, elevated: 10, high: 11.5, veryHigh: 13.5 }
+  } else {
+    // 1-3 year terms - higher rates acceptable
+    return { competitive: 10, elevated: 11.5, high: 13, veryHigh: 15 }
+  }
+}
+
+// Get rate assessment based on term-adjusted thresholds
+const getRateAssessment = (effectiveRate, leaseTerm) => {
+  const thresholds = getRateThresholds(leaseTerm)
+
+  if (effectiveRate > thresholds.veryHigh) {
+    return { level: 'veryHigh', label: '🚨 Very High Risk', description: 'Significantly above market', textClass: 'text-red-600', bgClass: 'bg-red-50 border-2 border-red-200' }
+  } else if (effectiveRate > thresholds.high) {
+    return { level: 'high', label: '⚠️ High Risk', description: 'Well above typical range', textClass: 'text-red-500', bgClass: 'bg-red-50 border-2 border-red-200' }
+  } else if (effectiveRate > thresholds.elevated) {
+    return { level: 'elevated', label: '⚡ Elevated', description: 'Above typical range', textClass: 'text-amber-600', bgClass: 'bg-amber-50 border-2 border-amber-200' }
+  } else if (effectiveRate > thresholds.competitive) {
+    return { level: 'ok', label: '✓ Acceptable', description: 'Within market range', textClass: 'text-teal-600', bgClass: 'bg-teal-50 border-2 border-teal-200' }
+  } else {
+    return { level: 'good', label: '✓ Competitive', description: 'Good rate for this term', textClass: 'text-teal-600', bgClass: 'bg-teal-50 border-2 border-teal-200' }
+  }
+}
+
 // FAQ data for schema
 const leaseAnalysisFAQs = [
   {
@@ -409,44 +442,23 @@ export default function LeaseAnalysis() {
 
                     {/* Key Metrics - Warnings Only, No Numbers */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div
-                        className={`p-4 rounded-lg ${
-                          results.effectiveRate > 10
-                            ? 'bg-red-50 border-2 border-red-200'
-                            : results.effectiveRate > 8.5
-                            ? 'bg-amber-50 border-2 border-amber-200'
-                            : 'bg-teal-50 border-2 border-teal-200'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <TrendingUp size={16} className="text-mx-slate-500" />
-                          <span className="text-body-sm text-mx-slate-600">Rate Assessment</span>
-                        </div>
-                        <p className={`text-lg font-bold ${
-                          results.effectiveRate > 12
-                            ? 'text-red-600'
-                            : results.effectiveRate > 10
-                            ? 'text-red-500'
-                            : results.effectiveRate > 8.5
-                            ? 'text-amber-600'
-                            : 'text-teal-600'
-                        }`}>
-                          {results.effectiveRate > 12
-                            ? '🚨 Very High Risk'
-                            : results.effectiveRate > 10
-                            ? '⚠️ High Risk'
-                            : results.effectiveRate > 8.5
-                            ? '⚡ Elevated'
-                            : '✓ Competitive'}
-                        </p>
-                        <p className="text-body-sm text-mx-slate-500">
-                          {results.effectiveRate > 10
-                            ? 'Significantly above market'
-                            : results.effectiveRate > 8.5
-                            ? 'Above typical range'
-                            : 'Within market range'}
-                        </p>
-                      </div>
+                      {(() => {
+                        const rateAssessment = getRateAssessment(results.effectiveRate, formData.leaseTerm)
+                        return (
+                          <div className={`p-4 rounded-lg ${rateAssessment.bgClass}`}>
+                            <div className="flex items-center gap-2 mb-1">
+                              <TrendingUp size={16} className="text-mx-slate-500" />
+                              <span className="text-body-sm text-mx-slate-600">Rate Assessment</span>
+                            </div>
+                            <p className={`text-lg font-bold ${rateAssessment.textClass}`}>
+                              {rateAssessment.label}
+                            </p>
+                            <p className="text-body-sm text-mx-slate-500">
+                              {rateAssessment.description}
+                            </p>
+                          </div>
+                        )
+                      })()}
 
                       <div
                         className={`p-4 rounded-lg ${
