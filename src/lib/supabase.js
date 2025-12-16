@@ -38,31 +38,33 @@ export async function saveQuoteRequest(data) {
   }
 
   // Forward to mxDriveIQ via Netlify function (avoids CORS)
-  try {
-    const mxDriveIQPayload = {
-      lead_type: 'quote_request',
-      name: data.name,
-      email: data.email,
-      phone: data.phone || null,
-      employer: data.employer || null,
-      state: data.state || data.calculation_inputs?.state || 'NSW',
-      annual_salary: data.calculation_inputs?.annualSalary || null,
-      vehicle_make: data.vehicle_make || null,
-      vehicle_model: data.vehicle_model || null,
-      vehicle_variant: data.vehicle_variant || null,
-      vehicle_price: data.calculation_inputs?.vehiclePrice || null,
-      fuel_type: data.calculation_inputs?.fuelType || null,
-      lease_term: data.calculation_inputs?.leaseTermYears || null,
-      annual_km: data.calculation_inputs?.annualKm || null,
-      calculation_inputs: data.calculation_inputs,
-      calculation_results: data.calculation_results,
-      source: data.source || 'millarx-website',
-      source_page: data.source_page,
-      utm_source: data.utm_source,
-      utm_medium: data.utm_medium,
-      utm_campaign: data.utm_campaign,
-    }
+  const mxDriveIQPayload = {
+    lead_type: 'quote_request',
+    name: data.name,
+    email: data.email,
+    phone: data.phone || null,
+    employer: data.employer || null,
+    state: data.state || data.calculation_inputs?.state || 'NSW',
+    annual_salary: data.calculation_inputs?.annualSalary || null,
+    vehicle_make: data.vehicle_make || null,
+    vehicle_model: data.vehicle_model || null,
+    vehicle_variant: data.vehicle_variant || null,
+    vehicle_description: data.vehicle_description || null,
+    vehicle_price: data.calculation_inputs?.vehiclePrice || null,
+    fuel_type: data.calculation_inputs?.fuelType || null,
+    lease_term: data.calculation_inputs?.leaseTermYears || null,
+    annual_km: data.calculation_inputs?.annualKm || null,
+    calculation_inputs: data.calculation_inputs,
+    calculation_results: data.calculation_results,
+    need_sourcing_help: data.need_sourcing_help || null,
+    source: data.source || 'millarx-website',
+    source_page: data.source_page,
+    utm_source: data.utm_source,
+    utm_medium: data.utm_medium,
+    utm_campaign: data.utm_campaign,
+  }
 
+  try {
     const response = await fetch('/.netlify/functions/forward-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -76,6 +78,18 @@ export async function saveQuoteRequest(data) {
     }
   } catch (err) {
     console.error('Error forwarding to mxDriveIQ:', err)
+  }
+
+  // Send email notification to Ben
+  try {
+    await fetch('/.netlify/functions/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+  } catch (err) {
+    // Don't fail the form submission if email notification fails
+    console.error('Error sending email notification:', err)
   }
 
   return { data: null, error: null }
@@ -172,10 +186,15 @@ export async function saveEmployerInquiry(data) {
 
   // Send email notification to Ben
   try {
-    await fetch('/.netlify/functions/send-employer-notification', {
+    await fetch('/.netlify/functions/send-notification', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...mxDriveIQPayload,
+        company_name: data.company_name,
+        contact_name: data.contact_name,
+        employee_count: data.employee_count,
+      }),
     })
   } catch (err) {
     // Don't fail the form submission if email notification fails
@@ -203,18 +222,18 @@ export async function saveContactSubmission(data) {
   }
 
   // Forward to mxDriveIQ via Netlify function
-  try {
-    const mxDriveIQPayload = {
-      lead_type: 'contact',
-      name: data.name,
-      email: data.email,
-      phone: data.phone || null,
-      inquiry_type: data.inquiryType || data.inquiry_type,
-      message: data.message,
-      source: 'millarx-website',
-      source_page: data.source_page,
-    }
+  const mxDriveIQPayload = {
+    lead_type: 'contact',
+    name: data.name,
+    email: data.email,
+    phone: data.phone || null,
+    inquiry_type: data.inquiryType || data.inquiry_type,
+    message: data.message,
+    source: 'millarx-website',
+    source_page: data.source_page,
+  }
 
+  try {
     const response = await fetch('/.netlify/functions/forward-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -226,6 +245,18 @@ export async function saveContactSubmission(data) {
     }
   } catch (err) {
     console.error('Error forwarding to mxDriveIQ:', err)
+  }
+
+  // Send email notification to Ben
+  try {
+    await fetch('/.netlify/functions/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+  } catch (err) {
+    // Don't fail the form submission if email notification fails
+    console.error('Error sending email notification:', err)
   }
 
   return { data: null, error: null }

@@ -228,8 +228,9 @@ export default function QuoteForm({
             Thank You, {formData.name.split(' ')[0]}!
           </h3>
           <p className="text-body text-mx-slate-600 mb-6">
-            We've received your quote request. Our team will be in touch within 24 hours
-            with a detailed quote tailored to your needs.
+            Your personalised quote is on its way to your inbox. Everything you need
+            to make an informed decision — fully transparent, no pressure.
+            Reach out whenever you're ready.
           </p>
           <div className="p-4 bg-mx-slate-50 rounded-lg text-left mb-6 space-y-2">
             <p className="text-body-sm text-mx-slate-600">
