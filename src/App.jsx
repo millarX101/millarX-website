@@ -3,6 +3,7 @@ import Layout from './components/layout/Layout'
 import NovatedLeasing from './pages/NovatedLeasing'
 import LeaseAnalysis from './pages/LeaseAnalysis'
 import Employers from './pages/Employers'
+import EmployerGuide from './pages/EmployerGuide'
 import Contact from './pages/Contact'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
@@ -34,6 +35,9 @@ function App() {
 
         {/* Reddit exclusive page - no nav, minimal layout */}
         <Route path="/redditnl" element={<RedditExclusive />} />
+
+        {/* Employer Guide - standalone print-friendly page */}
+        <Route path="/employer-guide" element={<EmployerGuide />} />
 
         {/* Lease Rescue Upload - standalone page after purchase */}
         <Route path="/lease-rescue/upload" element={<LeaseRescueUpload />} />

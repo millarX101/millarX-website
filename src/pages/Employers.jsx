@@ -487,7 +487,9 @@ export default function Employers() {
                 Schedule a Call
               </a>
               <a
-                href="mailto:ben@millarx.com.au?subject=Employer%20Info%20Pack%20Request"
+                href="/employer-guide"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white border-2 border-white/50 hover:bg-white/10 transition-all"
               >
                 <Download size={18} />
