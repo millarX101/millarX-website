@@ -13,9 +13,9 @@ import {
   TYRES_COST_PER_SET,
   TYRES_KM_INTERVAL,
   PAY_PERIODS,
-  STAMP_DUTY_RATES,
-  BASE_REGISTRATION,
 } from '../../lib/constants'
+import { calculateStampDuty } from '../../utils/stampDutyCalculator'
+import { getAnnualRegistration } from '../../utils/registrationCalculator'
 
 /**
  * Calculate income tax savings from pre-tax deductions
@@ -46,17 +46,20 @@ export function calculateIncomeTaxSavings(income, preTaxDeduct) {
 
 /**
  * Calculate on-road costs (registration + stamp duty)
+ * Now uses accurate state-based calculations
  */
-export function calculateOnRoadCosts(basePrice, state = 'VIC') {
-  const registration = BASE_REGISTRATION
-  const stampDutyRate = STAMP_DUTY_RATES[state] || 0.04
-  const stampDuty = basePrice * stampDutyRate
+export function calculateOnRoadCosts(basePrice, state = 'VIC', isEV = false) {
+  // Use accurate state-based stamp duty calculation
+  const stampDuty = calculateStampDuty(state, basePrice, isEV)
+
+  // Use accurate state-based registration (annual, includes CTP)
+  const registration = getAnnualRegistration(state, isEV)
 
   return {
     registration,
     stampDuty,
     total: registration + stampDuty,
-    driveAwayPrice: basePrice + registration + stampDuty,
+    driveAwayPrice: basePrice + stampDuty, // Note: rego is annual running cost, not upfront
   }
 }
 
@@ -79,20 +82,21 @@ export function calculateLease(inputs) {
   const isEV = fuelType === 'Electric Vehicle' || fuelType === 'ev'
   const carType = isEV ? 'Electric Vehicle' : fuelType
 
-  // Handle on-road costs
+  // Handle on-road costs with accurate state-based calculations
   let baseVehiclePrice, driveAwayPrice, onRoadCosts, stamp, rego
 
   if (isOnRoadPriceIncluded) {
     driveAwayPrice = vehiclePrice
-    stamp = driveAwayPrice * (STAMP_DUTY_RATES[state] || 0.04)
-    rego = BASE_REGISTRATION
+    // Use accurate stamp duty calculation even for drive-away prices
+    stamp = calculateStampDuty(state, driveAwayPrice, isEV)
+    rego = getAnnualRegistration(state, isEV)
     onRoadCosts = { registration: rego, stampDuty: stamp, total: stamp + rego }
   } else {
     baseVehiclePrice = vehiclePrice
-    onRoadCosts = calculateOnRoadCosts(baseVehiclePrice, state)
+    onRoadCosts = calculateOnRoadCosts(baseVehiclePrice, state, isEV)
     stamp = onRoadCosts.stampDuty
     rego = onRoadCosts.registration
-    driveAwayPrice = onRoadCosts.driveAwayPrice
+    driveAwayPrice = baseVehiclePrice + stamp // Stamp duty added to drive-away
   }
 
   // Finance calculations

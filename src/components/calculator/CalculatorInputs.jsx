@@ -202,6 +202,15 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           onChange={(e) => updateInput('payPeriod', e.target.value)}
         />
 
+        {/* State Selection - Affects stamp duty and registration */}
+        <Select
+          label="State/Territory"
+          options={stateOptions}
+          value={inputs.state}
+          onChange={(e) => updateInput('state', e.target.value)}
+          helperText="Affects stamp duty and registration costs"
+        />
+
         {/* Interest Rate Info - Important for accuracy */}
         <div className="p-4 bg-mx-slate-50 rounded-lg border border-mx-slate-200">
           <div className="flex justify-between text-body-sm">
@@ -223,7 +232,7 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           <span>Advanced Options</span>
         </button>
 
-        {/* Advanced Options */}
+        {/* Advanced Options - Currently empty, kept for future use */}
         <AnimatePresence>
           {showAdvancedOptions && (
             <motion.div
@@ -233,14 +242,9 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
               transition={{ duration: 0.2 }}
               className="space-y-6 overflow-hidden"
             >
-              {/* State Selection */}
-              <Select
-                label="State/Territory"
-                options={stateOptions}
-                value={inputs.state}
-                onChange={(e) => updateInput('state', e.target.value)}
-                helperText="Affects stamp duty calculation"
-              />
+              <p className="text-body-sm text-mx-slate-500 italic">
+                No additional options available at this time.
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
