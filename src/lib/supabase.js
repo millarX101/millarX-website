@@ -128,6 +128,7 @@ export async function saveLeaseAnalysis(data) {
 
 /**
  * Save an employer inquiry to the database AND forward to mxDriveIQ
+ * Also sends email notification to ben@millarx.com.au
  */
 export async function saveEmployerInquiry(data) {
   // Save to local Supabase
@@ -167,6 +168,18 @@ export async function saveEmployerInquiry(data) {
     }
   } catch (err) {
     console.error('Error forwarding to mxDriveIQ:', err)
+  }
+
+  // Send email notification to Ben
+  try {
+    await fetch('/.netlify/functions/send-employer-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+  } catch (err) {
+    // Don't fail the form submission if email notification fails
+    console.error('Error sending email notification:', err)
   }
 
   return { data: null, error: null }

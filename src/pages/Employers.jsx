@@ -449,12 +449,13 @@ export default function Employers() {
             viewport={{ once: true }}
           >
             <blockquote className="text-display-sm font-serif mb-6 italic">
-              "We switched from SG Fleet and the difference was immediate.
-              Our HR team spends 80% less time on novated lease queries
-              because employees can see everything themselves."
+              "Our Finance Director spotted that employees were getting
+              overpriced leases from their existing provider. After switching
+              to millarX, our team can see exactly what they're paying —
+              no hidden fees, no surprises."
             </blockquote>
             <p className="text-body text-mx-slate-400">
-              — HR Manager, 200-person tech company
+              — HR Manager, Melbourne tech company
             </p>
           </motion.div>
         </div>
@@ -475,20 +476,23 @@ export default function Employers() {
               Join the employers who've already made the switch.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-white text-mx-purple-700 hover:bg-mx-purple-50"
+              <a
+                href="#contact-form"
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
               >
                 Schedule a Call
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/10"
-                icon={<Download size={18} />}
+              </a>
+              <a
+                href="mailto:ben@millarx.com.au?subject=Employer%20Info%20Pack%20Request"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white border-2 border-white/50 hover:bg-white/10 transition-all"
               >
+                <Download size={18} />
                 Download Employer Guide
-              </Button>
+              </a>
             </div>
             <p className="text-body text-mx-purple-200 mt-6">
               Or email us at{' '}
