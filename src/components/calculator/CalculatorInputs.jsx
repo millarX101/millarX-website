@@ -202,6 +202,17 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           onChange={(e) => updateInput('payPeriod', e.target.value)}
         />
 
+        {/* Interest Rate Info - Important for accuracy */}
+        <div className="p-4 bg-mx-slate-50 rounded-lg border border-mx-slate-200">
+          <div className="flex justify-between text-body-sm">
+            <span className="text-mx-slate-600">Interest Rate</span>
+            <span className="font-semibold text-mx-purple-700">7.50% p.a. (Fixed)</span>
+          </div>
+          <p className="text-body-sm text-mx-slate-500 mt-2">
+            Estimate only. All-up rate including fees. Actual rate may vary depending on term.
+          </p>
+        </div>
+
         {/* Advanced Options Toggle */}
         <button
           type="button"
@@ -230,17 +241,6 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
                 onChange={(e) => updateInput('state', e.target.value)}
                 helperText="Affects stamp duty calculation"
               />
-
-              {/* Interest rate info */}
-              <div className="p-4 bg-mx-slate-50 rounded-lg">
-                <div className="flex justify-between text-body-sm">
-                  <span className="text-mx-slate-600">Interest Rate</span>
-                  <span className="font-semibold text-mx-purple-700">7.50% p.a. (Fixed)</span>
-                </div>
-                <p className="text-body-sm text-mx-slate-500 mt-2">
-                  All-up rate including establishment fees
-                </p>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
