@@ -14,6 +14,7 @@ import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
+import Honeypot, { isSpamSubmission } from '../components/ui/Honeypot'
 import BlurCircle from '../components/shared/BlurCircle'
 import SEO, { localBusinessSchema } from '../components/shared/SEO'
 import { saveEmployerInquiry } from '../lib/supabase'
@@ -26,6 +27,7 @@ export default function Employers() {
     email: '',
     phone: '',
     employeeCount: '',
+    website: '', // Honeypot field
   })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -38,6 +40,13 @@ export default function Employers() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Spam check - if honeypot field is filled, silently "succeed"
+    if (isSpamSubmission(formData.website)) {
+      setSubmitted(true)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -228,6 +237,9 @@ export default function Employers() {
                   Get in Touch
                 </h3>
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  {/* Honeypot field - hidden from humans, catches bots */}
+                  <Honeypot value={formData.website} onChange={handleChange} />
+
                   <Input
                     label="Company Name"
                     name="companyName"

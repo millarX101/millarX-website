@@ -22,6 +22,10 @@ export default function Calculator({ source = 'website', showAdvanced = false })
     payPeriod: 'monthly',
     isOnRoadPriceIncluded: false,
     selectedEV: '',
+    // Structured vehicle data for quote form pre-fill
+    vehicleMake: '',
+    vehicleModel: '',
+    vehicleVariant: '',
   })
 
   const [showBreakdown, setShowBreakdown] = useState(false)
@@ -37,6 +41,10 @@ export default function Calculator({ source = 'website', showAdvanced = false })
         fuelType: 'Electric Vehicle',
         selectedEV: `${vehicleData.make} ${vehicleData.model} ${vehicleData.trim || ''}`.trim(),
         isOnRoadPriceIncluded: true, // EV catalog prices are drive-away
+        // Store structured vehicle data for quote form pre-fill
+        vehicleMake: vehicleData.make || '',
+        vehicleModel: vehicleData.model || '',
+        vehicleVariant: vehicleData.trim || vehicleData.variant || '',
       }))
       // Clear the state so it doesn't re-apply on subsequent renders
       window.history.replaceState({}, document.title)

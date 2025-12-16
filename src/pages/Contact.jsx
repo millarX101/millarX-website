@@ -5,6 +5,7 @@ import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
 import Select from '../components/ui/Select'
+import Honeypot, { isSpamSubmission } from '../components/ui/Honeypot'
 import SEO from '../components/shared/SEO'
 import { saveContactSubmission } from '../lib/supabase'
 import { fadeInUp, staggerContainer } from '../lib/animations'
@@ -17,6 +18,7 @@ export default function Contact() {
     phone: '',
     inquiryType: '',
     message: '',
+    website: '', // Honeypot field
   })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -37,6 +39,13 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Spam check - if honeypot field is filled, silently "succeed"
+    if (isSpamSubmission(formData.website)) {
+      setSubmitted(true)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -189,6 +198,9 @@ export default function Contact() {
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Honeypot field - hidden from humans, catches bots */}
+                <Honeypot value={formData.website} onChange={handleChange} />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <Input
                     label="Your Name"

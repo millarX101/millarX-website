@@ -5,6 +5,7 @@ import Modal from '../ui/Modal'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Button from '../ui/Button'
+import Honeypot, { isSpamSubmission } from '../ui/Honeypot'
 import { saveQuoteRequest } from '../../lib/supabase'
 import { formatCurrency } from '../../lib/utils'
 import { STATES } from '../../lib/constants'
@@ -27,11 +28,14 @@ export default function QuoteForm({
     state: calculationInputs?.state || 'VIC',
     annualSalary: calculationInputs?.annualSalary || '',
     annualKm: calculationInputs?.annualKm || '',
-    // Step 3: Vehicle Details
-    vehicleMake: '',
-    vehicleModel: '',
-    vehicleVariant: '',
-    needSourcingHelp: 'yes', // yes, no, unsure
+    // Step 3: Vehicle Details - pre-fill from calculator if available
+    vehicleMake: calculationInputs?.vehicleMake || '',
+    vehicleModel: calculationInputs?.vehicleModel || '',
+    vehicleVariant: calculationInputs?.vehicleVariant || '',
+    // Default to 'no' if vehicle is already selected, 'yes' otherwise
+    needSourcingHelp: calculationInputs?.vehicleMake ? 'no' : 'yes',
+    // Honeypot field for spam prevention
+    website: '',
   })
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -70,6 +74,14 @@ export default function QuoteForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Spam check - if honeypot field is filled, silently "succeed"
+    if (isSpamSubmission(formData.website)) {
+      // Fake success to not alert bot
+      setSubmitted(true)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -156,10 +168,11 @@ export default function QuoteForm({
       state: calculationInputs?.state || 'VIC',
       annualSalary: calculationInputs?.annualSalary || '',
       annualKm: calculationInputs?.annualKm || '',
-      vehicleMake: '',
-      vehicleModel: '',
-      vehicleVariant: '',
-      needSourcingHelp: 'yes',
+      // Keep vehicle pre-fill from calculator
+      vehicleMake: calculationInputs?.vehicleMake || '',
+      vehicleModel: calculationInputs?.vehicleModel || '',
+      vehicleVariant: calculationInputs?.vehicleVariant || '',
+      needSourcingHelp: calculationInputs?.vehicleMake ? 'no' : 'yes',
     })
     setStep(1)
     setSubmitted(false)
@@ -215,6 +228,9 @@ export default function QuoteForm({
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Get a Formal Quote" size="lg">
       <form onSubmit={handleSubmit}>
+        {/* Honeypot field - hidden from humans, catches bots */}
+        <Honeypot value={formData.website} onChange={handleChange} />
+
         {/* Progress indicator */}
         <div className="flex items-center justify-center gap-2 mb-6">
           {[1, 2, 3].map((s) => (

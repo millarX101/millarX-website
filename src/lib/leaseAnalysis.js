@@ -5,6 +5,32 @@
  */
 
 // ============================================
+// PROVIDER-SPECIFIC LOGIC
+// ============================================
+
+/**
+ * Detect if provider is millarX (uses different payment structure)
+ * millarX: 1 payment in arrears, non-averaged
+ * Others: 2 months deferred, averaged
+ */
+function isMillarXProvider(providerName) {
+  if (!providerName) return false
+  const normalized = providerName.toLowerCase().trim()
+  return normalized.includes('millarx') ||
+         normalized.includes('millerx') ||
+         normalized.includes('millar x') ||
+         normalized.includes('miller x')
+}
+
+/**
+ * Get payment deferral based on provider
+ * millarX uses 1 month arrears, most others use 2 months deferred
+ */
+function getPaymentDeferral(providerName) {
+  return isMillarXProvider(providerName) ? 1 : 2
+}
+
+// ============================================
 // IRR CALCULATION FUNCTIONS
 // ============================================
 
@@ -338,11 +364,16 @@ export function analyzeLeaseQuote({
   balloonIncludesGST,
   leaseTerm,
   shownRate,
-  paymentDeferral = 2,
+  providerName,
+  paymentDeferral,
   state = 'VIC',
 }) {
+  // Use provider-specific deferral if not explicitly set
+  // millarX uses 1 month arrears, others typically use 2 months deferred
+  const deferral = paymentDeferral ?? getPaymentDeferral(providerName)
+
   // Convert payment to monthly (accounting for deferral - fewer actual payment months)
-  const monthlyPayment = convertToMonthlyPayment(financePayment, paymentFrequency, leaseTerm, paymentDeferral)
+  const monthlyPayment = convertToMonthlyPayment(financePayment, paymentFrequency, leaseTerm, deferral)
 
   // Adjust residual if includes GST
   const adjustedResidual = balloonIncludesGST ? residualValue / 1.1 : residualValue
@@ -359,7 +390,7 @@ export function analyzeLeaseQuote({
     monthlyPayment,
     adjustedResidual,
     termMonths,
-    paymentDeferral
+    deferral
   )
   const effectiveRate = monthlyRate * 12 * 100
 
@@ -367,7 +398,7 @@ export function analyzeLeaseQuote({
   const expectedFinancing = calculateExpectedFinancing(null, fbtValue, state)
 
   // Account for deferred payments in financing excess calculation
-  const deferredPaymentAmount = monthlyPayment * paymentDeferral
+  const deferredPaymentAmount = monthlyPayment * deferral
   const adjustedAmountFinanced = amountFinanced - deferredPaymentAmount
   const financingExcess = adjustedAmountFinanced - expectedFinancing.expected
 
@@ -378,7 +409,7 @@ export function analyzeLeaseQuote({
     monthlyPayment,
     adjustedResidual,
     termMonths,
-    paymentDeferral
+    deferral
   )
 
   // Calculate total costs

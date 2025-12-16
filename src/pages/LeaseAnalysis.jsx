@@ -75,6 +75,8 @@ export default function LeaseAnalysis() {
     const shownRate = parseFloat(formData.shownRate) || 0
 
     // Use the proper IRR-based analysis
+    // Provider name is passed to determine correct payment timing
+    // (millarX uses 1 month arrears, others use 2 months deferred)
     const analysis = analyzeLeaseQuote({
       fbtValue,
       financePayment,
@@ -83,7 +85,7 @@ export default function LeaseAnalysis() {
       balloonIncludesGST: formData.balloonIncludesGST,
       leaseTerm,
       shownRate,
-      paymentDeferral: 2, // Always default to 2 months
+      providerName: formData.providerName,
       state: formData.state,
     })
 
