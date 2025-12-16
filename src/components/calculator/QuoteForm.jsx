@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Send, CheckCircle, Car, User, Briefcase } from 'lucide-react'
 import Modal from '../ui/Modal'
@@ -42,6 +42,37 @@ export default function QuoteForm({
   const [error, setError] = useState(null)
 
   const stateOptions = STATES
+
+  // Helper to get vehicle display name from various sources
+  const getVehicleDisplayName = () => {
+    // First try structured vehicle data
+    if (formData.vehicleMake || formData.vehicleModel) {
+      return [formData.vehicleMake, formData.vehicleModel, formData.vehicleVariant].filter(Boolean).join(' ')
+    }
+    // Then try selectedEV from calculator
+    if (calculationInputs?.selectedEV) {
+      return calculationInputs.selectedEV
+    }
+    // Fallback to generic description
+    return `${calculationInputs?.fuelType || 'Vehicle'} - ${formatCurrency(calculationResults?.driveAwayPrice || 0)}`
+  }
+
+  // Sync form data when modal opens with new calculator inputs
+  // Always use calculator values (they represent the user's current selections)
+  useEffect(() => {
+    if (isOpen && calculationInputs) {
+      setFormData(prev => ({
+        ...prev,
+        state: calculationInputs.state || 'VIC',
+        annualSalary: calculationInputs.annualSalary || '',
+        annualKm: calculationInputs.annualKm || '',
+        vehicleMake: calculationInputs.vehicleMake || '',
+        vehicleModel: calculationInputs.vehicleModel || '',
+        vehicleVariant: calculationInputs.vehicleVariant || '',
+        needSourcingHelp: (calculationInputs.vehicleMake || calculationInputs.selectedEV) ? 'no' : 'yes',
+      }))
+    }
+  }, [isOpen, calculationInputs])
 
   const sourcingOptions = [
     { value: 'yes', label: "Yes, help me find the best deal" },
@@ -207,7 +238,7 @@ export default function QuoteForm({
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-body-sm">
               <span className="text-mx-slate-500">Vehicle:</span>
               <span className="text-mx-slate-800">
-                {formData.vehicleMake || calculationInputs?.selectedEV || `${calculationInputs?.fuelType} - ${formatCurrency(calculationResults.driveAwayPrice)}`}
+                {getVehicleDisplayName()}
               </span>
               <span className="text-mx-slate-500">Annual savings:</span>
               <span className="text-mx-purple-700 font-medium">
@@ -262,6 +293,19 @@ export default function QuoteForm({
             animate={{ opacity: 1, x: 0 }}
             className="space-y-5"
           >
+            {/* Vehicle Summary Banner */}
+            <div className="p-3 bg-mx-purple-50 border border-mx-purple-200 rounded-lg flex items-center gap-3">
+              <Car className="text-mx-purple-600 flex-shrink-0" size={20} />
+              <div className="flex-1 min-w-0">
+                <p className="text-body-sm font-medium text-mx-purple-800 truncate">
+                  {getVehicleDisplayName()}
+                </p>
+                <p className="text-body-sm text-mx-purple-600">
+                  {formatCurrency(calculationResults?.driveAwayPrice || 0)} • Save {formatCurrency(calculationResults?.annualTaxSavings || 0)}/yr
+                </p>
+              </div>
+            </div>
+
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-mx-purple-100 flex items-center justify-center">
                 <User className="text-mx-purple-600" size={20} />
@@ -325,6 +369,19 @@ export default function QuoteForm({
             animate={{ opacity: 1, x: 0 }}
             className="space-y-5"
           >
+            {/* Vehicle Summary Banner */}
+            <div className="p-3 bg-mx-purple-50 border border-mx-purple-200 rounded-lg flex items-center gap-3">
+              <Car className="text-mx-purple-600 flex-shrink-0" size={20} />
+              <div className="flex-1 min-w-0">
+                <p className="text-body-sm font-medium text-mx-purple-800 truncate">
+                  {getVehicleDisplayName()}
+                </p>
+                <p className="text-body-sm text-mx-purple-600">
+                  {formatCurrency(calculationResults?.driveAwayPrice || 0)} • Save {formatCurrency(calculationResults?.annualTaxSavings || 0)}/yr
+                </p>
+              </div>
+            </div>
+
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-mx-purple-100 flex items-center justify-center">
                 <Briefcase className="text-mx-purple-600" size={20} />
