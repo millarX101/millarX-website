@@ -445,19 +445,25 @@ export function analyzeLeaseQuote({
   const hasLowRiskPacks = financingExcess > lowRiskThreshold && financingExcess <= mediumRiskThreshold
 
   // Calculate score using term-adjusted thresholds
+  // Score guide:
+  //   9-10 (Excellent): Rate ≤ competitive AND clean
+  //   7-8 (Good): Rate ≤ elevated AND clean
+  //   5-6 (Average): Rate elevated OR minor extras
+  //   3-4 (Caution): Rate high OR moderate extras
+  //   1-2 (Warning): Rate very high OR significant extras
   const thresholds = getRateThresholds(leaseTerm)
   let score = 10
   const penalties = []
 
   // Rate-based penalties (term-adjusted)
   if (effectiveRate > thresholds.veryHigh) {
-    score = Math.min(score, 3)
+    score = Math.min(score, 2)
     penalties.push('Extremely high effective rate')
   } else if (effectiveRate > thresholds.high) {
-    score = Math.min(score, 5)
+    score = Math.min(score, 4)
     penalties.push('High effective rate')
   } else if (effectiveRate > thresholds.elevated) {
-    score -= 2
+    score = Math.min(score, 6)
     penalties.push('Above average rate')
   } else if (effectiveRate <= thresholds.competitive) {
     // Bonus for competitive rate
