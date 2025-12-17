@@ -63,7 +63,7 @@ export default function CostBreakdown({ results, payPeriod, isEV, onClose }) {
                     </tr>
                     <tr>
                       <td className="py-3 px-4 text-body text-mx-slate-600">
-                        + Stamp Duty (Est. 4%)
+                        + Stamp Duty (Est.)
                       </td>
                       <td className="py-3 px-4 text-right font-mono font-semibold text-mx-slate-900">
                         {formatCurrency(results.onRoadCosts?.stampDuty)}
