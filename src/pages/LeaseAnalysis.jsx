@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   AlertTriangle,
@@ -579,13 +580,30 @@ export default function LeaseAnalysis() {
                     </div>
 
                     {/* CTA */}
-                    <div className="space-y-3">
-                      <Button variant="primary" fullWidth>
-                        Get millarX Quote
-                      </Button>
-                      <Button variant="secondary" fullWidth>
-                        Download Report
-                      </Button>
+                    <div className="space-y-4">
+                      <Link to="/contact" className="block">
+                        <Button variant="primary" fullWidth as="div">
+                          Get a millarX Quote
+                        </Button>
+                      </Link>
+                      <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg text-center">
+                        <p className="text-body text-purple-800 mb-2">
+                          <strong>Want an expert in your corner?</strong>
+                        </p>
+                        <p className="text-body-sm text-purple-700 mb-3">
+                          Get exact figures, line-by-line breakdown, and negotiation scripts with our Lease Rescue Pack.
+                        </p>
+                        <a
+                          href="#lease-rescue"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            document.querySelector('section.section-padding.bg-gradient-to-b')?.scrollIntoView({ behavior: 'smooth' })
+                          }}
+                          className="text-mx-purple-600 hover:text-mx-purple-700 font-semibold underline"
+                        >
+                          Learn more →
+                        </a>
+                      </div>
                     </div>
                   </Card>
                 ) : (
