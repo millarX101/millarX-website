@@ -120,7 +120,7 @@ export default function BrowseEVs() {
 
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                <Zap className="text-teal-400" size={24} />
+                <Zap className="text-mx-pink-400" size={24} />
               </div>
               <h1 className="text-display-md font-serif">Browse Electric Vehicles</h1>
             </div>
@@ -192,20 +192,20 @@ export default function BrowseEVs() {
                             </div>
                           )}
 
-                          {/* FBT Badge */}
-                          {ev.fbt_exempt !== false && (
-                            <div className="absolute top-3 left-3 px-3 py-1 bg-teal-500 text-white text-body-sm font-medium rounded-full flex items-center gap-1">
-                              <Zap size={14} />
-                              FBT Exempt
-                            </div>
-                          )}
-
-                          {/* Special Badge */}
-                          {hasSpecial && ev.special_text && (
-                            <div className="absolute top-3 right-3 px-3 py-1 bg-orange-500 text-white text-body-sm font-medium rounded-full">
-                              {ev.special_text}
-                            </div>
-                          )}
+                          {/* Badges - stacked vertically */}
+                          <div className="absolute top-3 left-3 flex flex-col gap-2">
+                            {ev.fbt_exempt !== false && (
+                              <div className="px-3 py-1 bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-body-sm font-medium rounded-full flex items-center gap-1 w-fit shadow-sm">
+                                <Zap size={14} />
+                                FBT Exempt
+                              </div>
+                            )}
+                            {hasSpecial && ev.special_text && (
+                              <div className="px-3 py-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-body-sm font-medium rounded-full w-fit shadow-md">
+                                {ev.special_text}
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {/* Content */}
@@ -220,7 +220,7 @@ export default function BrowseEVs() {
 
                           {/* Price */}
                           <div className="mb-4">
-                            <p className="text-3xl font-bold text-teal-600 font-mono">
+                            <p className="text-3xl font-bold text-mx-purple-600 font-mono">
                               {formatCurrency(displayPrice)}
                             </p>
                             <p className="text-body-sm text-mx-slate-500">
@@ -254,7 +254,7 @@ export default function BrowseEVs() {
                           <div className="space-y-2">
                             <button
                               onClick={() => handleSelectEV(ev)}
-                              className="w-full px-4 py-3 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                              className="w-full px-4 py-3 bg-gradient-to-r from-mx-purple-700 to-mx-pink-500 hover:from-mx-purple-800 hover:to-mx-pink-600 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                             >
                               <Zap size={18} />
                               Get Quote at Special Price
