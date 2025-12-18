@@ -108,7 +108,7 @@ export default function BrowseEVs() {
 
       <div className="min-h-screen bg-mx-ivory">
         {/* Header */}
-        <section className="bg-gradient-to-br from-mx-purple-700 to-mx-purple-900 text-white py-12 md:py-16">
+        <section className="bg-gradient-to-br from-mx-purple-900 via-mx-purple-700 to-mx-pink-600 text-white py-12 md:py-16">
           <div className="container-wide mx-auto px-4 md:px-6 lg:px-8">
             <button
               onClick={() => navigate(-1)}

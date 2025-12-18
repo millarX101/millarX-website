@@ -6,7 +6,9 @@ export default function BlurCircle({
   size = 'md',
 }) {
   const colors = {
-    purple: 'radial-gradient(circle, rgba(124,58,237,0.4) 0%, transparent 70%)',
+    purple: 'radial-gradient(circle, rgba(74,4,78,0.5) 0%, transparent 70%)',
+    pink: 'radial-gradient(circle, rgba(236,72,153,0.4) 0%, transparent 70%)',
+    magenta: 'radial-gradient(circle, rgba(217,70,239,0.35) 0%, transparent 70%)',
     teal: 'radial-gradient(circle, rgba(20,184,166,0.3) 0%, transparent 70%)',
     amber: 'radial-gradient(circle, rgba(251,191,36,0.3) 0%, transparent 70%)',
   }
@@ -21,7 +23,7 @@ export default function BlurCircle({
   return (
     <div
       className={cn(
-        'absolute rounded-full blur-3xl opacity-20 pointer-events-none',
+        'absolute rounded-full blur-3xl opacity-30 pointer-events-none',
         sizes[size],
         className
       )}

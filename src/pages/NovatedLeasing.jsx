@@ -104,9 +104,12 @@ export default function NovatedLeasing() {
       />
 
       <div className="relative overflow-hidden">
-        {/* Decorative elements */}
-        <BlurCircle color="purple" size="xl" className="top-0 right-0 translate-x-1/2 -translate-y-1/2" />
-        <BlurCircle color="teal" size="lg" className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
+        {/* Decorative elements - purple to pink gradient effect */}
+        <BlurCircle color="purple" size="xl" className="top-0 right-0 translate-x-1/3 -translate-y-1/3" />
+        <BlurCircle color="pink" size="lg" className="top-20 right-20" />
+        <BlurCircle color="magenta" size="md" className="top-40 left-10" />
+        <BlurCircle color="pink" size="lg" className="bottom-0 left-0 -translate-x-1/2 translate-y-1/2" />
+        <BlurCircle color="purple" size="md" className="bottom-20 right-10" />
 
         {/* Hero Section */}
       <section className="section-padding relative">
@@ -266,7 +269,7 @@ export default function NovatedLeasing() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-br from-mx-purple-700 to-mx-purple-900 text-white">
+      <section className="section-padding bg-gradient-to-br from-mx-purple-900 via-mx-purple-700 to-mx-pink-600 text-white">
         <div className="container-narrow mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

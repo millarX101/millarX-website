@@ -296,7 +296,7 @@ export default function AboutUs() {
         </section>
 
         {/* CTA Section */}
-        <section className="section-padding bg-gradient-to-br from-mx-purple-700 to-mx-purple-900 text-white">
+        <section className="section-padding bg-gradient-to-br from-mx-purple-900 via-mx-purple-700 to-mx-pink-600 text-white">
           <div className="container-narrow mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

@@ -52,7 +52,7 @@ body {
 
 /* Focus states for accessibility */
 :focus-visible {
-  outline: 2px solid #7C3AED;
+  outline: 2px solid #86198F;
   outline-offset: 2px;
 }
 
@@ -108,14 +108,19 @@ body {
   @apply max-w-7xl mx-auto;
 }
 
-/* Gradient text */
+/* Gradient text - dark purple to pink */
 .gradient-text {
-  @apply bg-gradient-to-r from-mx-purple-700 to-mx-purple-500 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-mx-purple-800 via-mx-purple-600 to-mx-pink-500 bg-clip-text text-transparent;
 }
 
-/* Purple gradient background */
+/* Purple to pink gradient background */
 .gradient-purple {
-  background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+  background: linear-gradient(135deg, #4A044E 0%, #86198F 50%, #EC4899 100%);
+}
+
+/* Dark gradient for CTAs */
+.gradient-dark {
+  background: linear-gradient(135deg, #4A044E 0%, #701A75 50%, #A21CAF 100%);
 }
 
 /* Subtle grain overlay texture class */

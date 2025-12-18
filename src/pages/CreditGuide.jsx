@@ -291,7 +291,7 @@ export default function CreditGuide() {
 
       <div className="min-h-screen bg-mx-warm-50">
         {/* Header */}
-        <section className="bg-gradient-to-br from-mx-purple-700 to-mx-purple-900 text-white py-16 md:py-24">
+        <section className="bg-gradient-to-br from-mx-purple-900 via-mx-purple-700 to-mx-pink-600 text-white py-16 md:py-24">
           <div className="container-wide mx-auto px-4 md:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
