@@ -179,12 +179,12 @@ export default function BrowseEVs() {
                         className="bg-white rounded-2xl shadow-card overflow-hidden border border-mx-slate-100 hover:shadow-card-hover transition-shadow"
                       >
                         {/* Image */}
-                        <div className="relative aspect-[16/10] bg-mx-slate-100">
+                        <div className="relative aspect-[16/9] bg-mx-slate-50 p-4">
                           {ev.image_url ? (
                             <img
                               src={ev.image_url}
                               alt={`${ev.year} ${ev.make} ${ev.model}`}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
