@@ -43,12 +43,12 @@ export default function NovatedLeasing() {
     {
       icon: DollarSign,
       title: 'Fair Pricing',
-      description: 'No dealer kickbacks. We work for you, not the dealership.',
+      description: 'Through new technology, we keep more of the novated savings in your pocket.',
     },
     {
       icon: Zap,
-      title: 'EV Specialists',
-      description: 'FBT-exempt electric vehicle experts. Maximise your savings.',
+      title: 'ICE or EV',
+      description: 'Our technology helps you get the most from any novated lease, petrol or electric.',
     },
   ]
 
