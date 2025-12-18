@@ -79,7 +79,7 @@ export default function NovatedLeasing() {
   return (
     <>
       <SEO
-        title="Novated Lease Calculator Australia 2025 | EV & Car Salary Packaging"
+        title="Free Novated Lease Calculator Australia 2025 | See Your Tax Savings"
         description="Free novated lease calculator for Australia. Calculate EV salary sacrifice savings instantly. FBT-exempt electric vehicles, transparent pricing, no hidden fees. See exactly what you'll save on your next car."
         canonical="/novated-leasing"
         structuredData={{

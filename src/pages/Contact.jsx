@@ -100,8 +100,8 @@ export default function Contact() {
   return (
     <>
       <SEO
-        title="Contact Us"
-        description="Get in touch with millarX for transparent novated leasing advice. We're here to help with any questions about salary packaging your next vehicle."
+        title="Contact millarX | Novated Lease Quotes Melbourne"
+        description="Get in touch with millarX for transparent novated leasing quotes in Melbourne. Free advice on salary packaging your next vehicle, EV or petrol."
         canonical="/contact"
       />
 

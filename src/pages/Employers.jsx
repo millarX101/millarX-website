@@ -136,8 +136,8 @@ export default function Employers() {
   return (
     <>
       <SEO
-        title="Novated Leasing for Employers Australia 2025 | Zero Cost Employee Benefit"
-        description="Offer transparent novated leasing to your employees at zero cost. Self-service platform reduces HR admin by 80%. No setup fees, no hidden costs. Partner with millarX today."
+        title="Novated Leasing for Employers Melbourne | Free Employee Benefit"
+        description="Offer novated leasing to your Melbourne employees at zero cost. Self-service platform reduces HR admin by 80%. No setup fees, no hidden costs. Partner with millarX today."
         canonical="/employers"
         structuredData={{
           '@context': 'https://schema.org',

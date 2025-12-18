@@ -7,7 +7,6 @@ Allow: /
 # Sitemap location
 Sitemap: https://www.millarx.com.au/sitemap.xml
 
-# Block common irrelevant paths
-Disallow: /api/
-Disallow: /_next/
-Disallow: /static/
+# Block private/promotional pages from indexing
+Disallow: /redditnl
+Disallow: /reddit-exclusive

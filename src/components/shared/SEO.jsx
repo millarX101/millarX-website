@@ -70,7 +70,7 @@ export const organizationSchema = {
     '@type': 'ContactPoint',
     telephone: '+61492886857',
     contactType: 'customer service',
-    email: 'info@millarx.com.au',
+    email: 'enquiries@millarx.com.au',
     availableLanguage: 'English',
   },
   sameAs: [],
@@ -84,7 +84,7 @@ export const localBusinessSchema = {
   description: 'Novated leasing broker offering transparent salary packaging for vehicles.',
   url: SITE_URL,
   telephone: '+61492886857',
-  email: 'info@millarx.com.au',
+  email: 'enquiries@millarx.com.au',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Ivanhoe',

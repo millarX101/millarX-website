@@ -147,7 +147,7 @@ export const FOOTER_LINKS = {
     { path: '/credit-guide', label: 'Credit Guide' }
   ],
   contact: {
-    email: 'info@millarx.com.au',
+    email: 'enquiries@millarx.com.au',
     phone: '0492 886 857',
     website: 'www.millarx.com.au'
   }
@@ -169,7 +169,7 @@ export const COMPANY = {
   },
   contact: {
     phone: '0492 886 857',
-    email: 'info@millarx.com.au',
+    email: 'enquiries@millarx.com.au',
     complaintsEmail: 'info@millarx.com.au',
     website: 'www.millarx.com.au'
   },

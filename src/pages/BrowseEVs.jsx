@@ -72,7 +72,7 @@ export default function BrowseEVs() {
   return (
     <>
       <SEO
-        title="Browse FBT-Exempt Electric Vehicles Australia 2025 | EV Novated Lease Prices"
+        title="FBT-Exempt EVs Under $91,387 | Tesla, BYD, Kia Novated Lease Australia"
         description="Browse FBT-exempt electric vehicles with fixed drive-away pricing. Tesla, BYD, BMW & more EVs. Get instant novated lease quotes with real tax savings calculated. Updated 2025 prices."
         canonical="/browse-evs"
         structuredData={{
