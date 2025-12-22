@@ -11,6 +11,9 @@ ALTER TABLE quote_requests ADD COLUMN IF NOT EXISTS need_sourcing_help TEXT DEFA
 -- Add employment details
 ALTER TABLE quote_requests ADD COLUMN IF NOT EXISTS employer TEXT;
 
+-- Add location/state column
+ALTER TABLE quote_requests ADD COLUMN IF NOT EXISTS state TEXT;
+
 -- Add tracking columns
 ALTER TABLE quote_requests ADD COLUMN IF NOT EXISTS utm_source TEXT;
 ALTER TABLE quote_requests ADD COLUMN IF NOT EXISTS utm_medium TEXT;
