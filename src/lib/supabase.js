@@ -22,10 +22,13 @@ export const mxDriveIQSupabase = mxDriveIQUrl && mxDriveIQKey
 
 /**
  * Normalize fuel type to match API expected values
- * Website uses "Electric Vehicle" but API expects "Electric"
+ * Website uses "Electric Vehicle" for EVs, and body types (SUV, Sedan, etc.) for ICE vehicles
+ * API expects: "Electric" | "Petrol" | "Diesel" | "Hybrid"
  */
 function normalizeFuelType(fuelType) {
   if (!fuelType) return null
+
+  // Direct mappings
   const mapping = {
     'Electric Vehicle': 'Electric',
     'electric vehicle': 'Electric',
@@ -34,7 +37,18 @@ function normalizeFuelType(fuelType) {
     'Diesel': 'Diesel',
     'Hybrid': 'Hybrid',
   }
-  return mapping[fuelType] || fuelType
+
+  if (mapping[fuelType]) {
+    return mapping[fuelType]
+  }
+
+  // Body types (SUV, Ute, Sedan, Hatch, Large Ute) are ICE vehicles - default to Petrol
+  const bodyTypes = ['SUV', 'Ute', 'Large Ute', 'Sedan', 'Hatch']
+  if (bodyTypes.includes(fuelType)) {
+    return 'Petrol'
+  }
+
+  return fuelType
 }
 
 /**
