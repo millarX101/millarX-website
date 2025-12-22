@@ -21,6 +21,23 @@ export const mxDriveIQSupabase = mxDriveIQUrl && mxDriveIQKey
 // Helper functions for database operations
 
 /**
+ * Normalize fuel type to match API expected values
+ * Website uses "Electric Vehicle" but API expects "Electric"
+ */
+function normalizeFuelType(fuelType) {
+  if (!fuelType) return null
+  const mapping = {
+    'Electric Vehicle': 'Electric',
+    'electric vehicle': 'Electric',
+    'EV': 'Electric',
+    'Petrol': 'Petrol',
+    'Diesel': 'Diesel',
+    'Hybrid': 'Hybrid',
+  }
+  return mapping[fuelType] || fuelType
+}
+
+/**
  * Save a quote request to the database AND forward to mxDriveIQ
  */
 export async function saveQuoteRequest(data) {
@@ -51,7 +68,7 @@ export async function saveQuoteRequest(data) {
     vehicle_variant: data.vehicle_variant || null,
     vehicle_description: data.vehicle_description || null,
     vehicle_price: data.calculation_inputs?.vehiclePrice || null,
-    fuel_type: data.calculation_inputs?.fuelType || null,
+    fuel_type: normalizeFuelType(data.calculation_inputs?.fuelType),
     lease_term: data.calculation_inputs?.leaseTermYears || null,
     annual_km: data.calculation_inputs?.annualKm || null,
     calculation_inputs: data.calculation_inputs,
