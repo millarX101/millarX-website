@@ -7,6 +7,7 @@ import {
   AlertCircle,
   Shield,
   TrendingUp,
+  Info,
 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -86,6 +87,7 @@ export default function LeaseAnalysis() {
 
   const [results, setResults] = useState(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [showRateRanges, setShowRateRanges] = useState(false)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -445,6 +447,7 @@ export default function LeaseAnalysis() {
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       {(() => {
                         const rateAssessment = getRateAssessment(results.effectiveRate, formData.leaseTerm)
+                        const thresholds = getRateThresholds(formData.leaseTerm)
                         return (
                           <div className={`p-4 rounded-lg ${rateAssessment.bgClass}`}>
                             <div className="flex items-center gap-2 mb-1">
@@ -457,6 +460,22 @@ export default function LeaseAnalysis() {
                             <p className="text-body-sm text-mx-slate-500">
                               {rateAssessment.description}
                             </p>
+                            <button
+                              onClick={() => setShowRateRanges(!showRateRanges)}
+                              className="text-xs text-mx-purple-600 hover:underline mt-2 flex items-center gap-1"
+                            >
+                              <Info size={12} />
+                              {showRateRanges ? 'Hide' : 'View'} rate ranges
+                            </button>
+                            {showRateRanges && (
+                              <div className="mt-2 text-xs text-mx-slate-600 space-y-0.5 bg-white/50 p-2 rounded">
+                                <p className="text-teal-600">✓ Competitive: ≤{thresholds.competitive}%</p>
+                                <p className="text-teal-600">✓ Acceptable: {thresholds.competitive}-{thresholds.elevated}%</p>
+                                <p className="text-amber-600">⚡ Elevated: {thresholds.elevated}-{thresholds.high}%</p>
+                                <p className="text-red-500">⚠️ High: {thresholds.high}-{thresholds.veryHigh}%</p>
+                                <p className="text-red-600">🚨 Very High: &gt;{thresholds.veryHigh}%</p>
+                              </div>
+                            )}
                           </div>
                         )
                       })()}
