@@ -183,13 +183,13 @@ export default function QuoteForm({
 
       setSubmitted(true)
 
-      // Google Ads conversion tracking
-      // Replace AW-CONVERSION_ID/CONVERSION_LABEL with your actual values from Google Ads
+      // Track conversion in Google Analytics (can be imported to Google Ads)
       if (typeof window.gtag !== 'undefined') {
-        window.gtag('event', 'conversion', {
-          'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL',
+        window.gtag('event', 'generate_lead', {
+          'currency': 'AUD',
           'value': calculationResults?.annualTaxSavings || 0,
-          'currency': 'AUD'
+          'event_category': 'Quote Request',
+          'event_label': vehicleDescription
         })
       }
     } catch (err) {
