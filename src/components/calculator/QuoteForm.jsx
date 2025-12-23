@@ -182,6 +182,16 @@ export default function QuoteForm({
       }
 
       setSubmitted(true)
+
+      // Google Ads conversion tracking
+      // Replace AW-CONVERSION_ID/CONVERSION_LABEL with your actual values from Google Ads
+      if (typeof window.gtag !== 'undefined') {
+        window.gtag('event', 'conversion', {
+          'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL',
+          'value': calculationResults?.annualTaxSavings || 0,
+          'currency': 'AUD'
+        })
+      }
     } catch (err) {
       console.error('Error submitting form:', err)
       setSubmitted(true)
