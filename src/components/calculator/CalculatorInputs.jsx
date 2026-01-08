@@ -242,9 +242,24 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
               transition={{ duration: 0.2 }}
               className="space-y-6 overflow-hidden"
             >
-              <p className="text-body-sm text-mx-slate-500 italic">
-                No additional options available at this time.
-              </p>
+              {/* Interstate car delivery */}
+              <div className="p-4 bg-mx-slate-50 rounded-lg border border-mx-slate-200">
+                <p className="text-body-sm font-medium text-mx-slate-700 mb-1">
+                  Buying from interstate?
+                </p>
+                <p className="text-body-sm text-mx-slate-500">
+                  Estimate vehicle delivery costs with our sister site{' '}
+                  <a
+                    href="https://www.landedx.com.au"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-mx-purple-600 hover:text-mx-purple-700 underline"
+                  >
+                    LandedX
+                  </a>
+                  . Get any used car delivered to your door from any state.
+                </p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

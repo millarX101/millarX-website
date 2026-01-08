@@ -171,21 +171,6 @@ export default function CalculatorResults({
           </Button>
         </div>
 
-        {/* Sister service - subtle helper */}
-        <div className="mt-4 p-3 bg-mx-slate-50 rounded-lg border border-mx-slate-200">
-          <p className="text-body-sm text-mx-slate-500">
-            Looking for a used car? Our sister site{' '}
-            <a
-              href="https://www.landedx.com.au"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-mx-purple-600 hover:text-mx-purple-700 underline"
-            >
-              LandedX
-            </a>
-            {' '}delivers pre-owned vehicles from any state to your door.
-          </p>
-        </div>
       </div>
     </Card>
   )
