@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { X, Snowflake } from 'lucide-react'
+import { X, Zap } from 'lucide-react'
 
 export default function HolidayBanner() {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     // Check if user has dismissed the banner
-    const dismissed = localStorage.getItem('holidayBanner2024Dismissed')
+    const dismissed = localStorage.getItem('newYearBanner2026Dismissed')
     if (!dismissed) {
       setIsVisible(true)
     }
@@ -14,23 +14,28 @@ export default function HolidayBanner() {
 
   const handleDismiss = () => {
     setIsVisible(false)
-    localStorage.setItem('holidayBanner2024Dismissed', 'true')
+    localStorage.setItem('newYearBanner2026Dismissed', 'true')
   }
 
   if (!isVisible) return null
 
   return (
-    <div className="bg-emerald-400 text-white py-2.5 px-4 relative">
-      <div className="container-wide mx-auto flex items-center justify-center gap-3">
-        <Snowflake size={18} className="animate-pulse hidden sm:block" />
-        <p className="text-sm sm:text-base font-medium text-center">
-          Wishing you a festive and safe Christmas and New Year! 🎄✨
-        </p>
-        <Snowflake size={18} className="animate-pulse hidden sm:block" />
+    <div className="bg-gradient-to-r from-mx-purple-600 via-mx-pink-500 to-mx-purple-600 text-white py-2.5 px-4 relative overflow-hidden">
+      {/* Animated background shimmer */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+
+      <div className="container-wide mx-auto flex items-center justify-center gap-3 relative">
+        <Zap size={18} className="animate-bounce text-yellow-300 hidden sm:block" />
+        <div className="overflow-hidden">
+          <p className="text-sm sm:text-base font-semibold text-center whitespace-nowrap animate-marquee">
+            New Year, New Car — Amazing EV deals in 2026! Drive electric for less with FBT exemptions
+          </p>
+        </div>
+        <Zap size={18} className="animate-bounce text-yellow-300 hidden sm:block" />
       </div>
       <button
         onClick={handleDismiss}
-        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/20 rounded-full transition-colors"
+        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/20 rounded-full transition-colors z-10"
         aria-label="Dismiss banner"
       >
         <X size={18} />

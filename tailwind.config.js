@@ -75,6 +75,20 @@ export default {
         'card': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         'glow': '0 0 40px -10px rgba(124, 58, 237, 0.3)',
       },
+      animation: {
+        'shimmer': 'shimmer 3s ease-in-out infinite',
+        'marquee': 'marquee 20s linear infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+      },
     },
   },
   plugins: [],
