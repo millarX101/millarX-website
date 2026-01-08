@@ -28,7 +28,7 @@ export default function HolidayBanner() {
         <Zap size={18} className="animate-bounce text-yellow-300 hidden sm:block" />
         <div className="overflow-hidden">
           <p className="text-sm sm:text-base font-semibold text-center whitespace-nowrap animate-marquee">
-            New Year, New Car — Amazing EV deals in 2026! Drive electric for less with FBT exemptions
+            New Year, New Car — Amazing deals on EVs and petrol vehicles in 2026! Save thousands with novated leasing
           </p>
         </div>
         <Zap size={18} className="animate-bounce text-yellow-300 hidden sm:block" />
