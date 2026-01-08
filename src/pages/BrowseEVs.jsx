@@ -275,6 +275,15 @@ export default function BrowseEVs() {
           <div className="container-narrow mx-auto px-4 text-center">
             <p className="text-body text-mx-slate-600 mb-4">
               Can't find what you're looking for? We can source any electric vehicle.
+              {' '}Or explore pre-owned options through{' '}
+              <a
+                href="https://www.landedx.com.au"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-mx-purple-600 hover:text-mx-purple-700 underline"
+              >
+                LandedX
+              </a>.
             </p>
             <Button
               variant="secondary"

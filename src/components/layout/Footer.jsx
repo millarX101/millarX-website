@@ -9,7 +9,7 @@ export default function Footer() {
     <footer className="bg-mx-slate-900 text-white">
       {/* Main footer content */}
       <div className="container-wide mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-4">
@@ -68,6 +68,23 @@ export default function Footer() {
                 >
                   Contact Us
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Related Services */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Related Services</h3>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href="https://www.landedx.com.au"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-mx-slate-400 hover:text-white transition-colors"
+                >
+                  LandedX - Used Car Delivery
+                </a>
               </li>
             </ul>
           </div>
