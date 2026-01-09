@@ -455,25 +455,21 @@ export default function Partner() {
                 to set up your employer account in minutes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="mailto:ben@millarx.com.au?subject=Employer%20Sign%20Up%20Request&body=Hi%20Ben%2C%0A%0AWe're%20interested%20in%20setting%20up%20novated%20leasing%20for%20our%20employees.%0A%0ACompany%20Name%3A%20%0AContact%20Name%3A%20%0AApprox%20Employee%20Count%3A%20%0A%0AThanks!">
-                  <Button
-                    size="lg"
-                    className="bg-white text-mx-purple-700 hover:bg-mx-purple-50"
-                    icon={<ArrowRight size={20} />}
-                    iconPosition="right"
-                  >
-                    Email to Get Started
-                  </Button>
+                <a
+                  href="mailto:ben@millarx.com.au?subject=Employer%20Sign%20Up%20Request&body=Hi%20Ben%2C%0A%0AWe're%20interested%20in%20setting%20up%20novated%20leasing%20for%20our%20employees.%0A%0ACompany%20Name%3A%20%0AContact%20Name%3A%20%0AApprox%20Employee%20Count%3A%20%0A%0AThanks!"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold bg-white text-mx-purple-700 hover:bg-mx-purple-50 transition-all shadow-lg hover:shadow-xl"
+                >
+                  Email to Get Started
+                  <ArrowRight size={20} />
                 </a>
-                <a href="/downloads/MillarX-SME-Employer-Guide.html" target="_blank" rel="noopener noreferrer">
-                  <Button
-                    size="lg"
-                    variant="secondary"
-                    className="border-white/50 text-white hover:bg-white/10"
-                    icon={<Download size={20} />}
-                  >
-                    Download Info Pack
-                  </Button>
+                <a
+                  href="/downloads/MillarX-SME-Employer-Guide.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold text-white border-2 border-white/50 hover:bg-white/10 transition-all"
+                >
+                  <Download size={20} />
+                  Download Info Pack
                 </a>
               </div>
               <p className="text-body text-mx-purple-200 mt-6">
