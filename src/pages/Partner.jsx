@@ -99,7 +99,6 @@ export default function Partner() {
       items: [
         'Clear pre-tax and post-tax deduction schedules',
         'Automated notifications when changes occur',
-        'Simple CSV exports for bulk processing',
         'Support for all pay frequencies (weekly, fortnightly, monthly)',
       ],
     },
@@ -432,7 +431,7 @@ export default function Partner() {
                   </p>
                   <p className="text-body text-mx-slate-600">
                     We handle the specialist pieces — finance, compliance, documentation, employee support.
-                    You get happy employees and zero extra work.
+                    You get happy employees with minimal extra effort — just payroll deductions and GST claims.
                   </p>
                 </div>
               </Card>
