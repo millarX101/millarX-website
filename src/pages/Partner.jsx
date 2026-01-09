@@ -191,11 +191,14 @@ export default function Partner() {
                 variants={fadeInUp}
                 className="flex flex-col sm:flex-row gap-4 justify-center"
               >
-                <Link to="/employers">
-                  <Button size="lg" icon={<ArrowRight size={20} />} iconPosition="right">
-                    Get Started
-                  </Button>
-                </Link>
+                <Button
+                  size="lg"
+                  icon={<ArrowRight size={20} />}
+                  iconPosition="right"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Sign Up Now
+                </Button>
                 <a href="/downloads/MillarX-SME-Employer-Guide.html" target="_blank" rel="noopener noreferrer">
                   <Button size="lg" variant="secondary" icon={<Download size={20} />}>
                     Download Info Pack
@@ -462,7 +465,7 @@ export default function Partner() {
                   onClick={() => setIsModalOpen(true)}
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold bg-white text-mx-purple-700 hover:bg-mx-purple-50 transition-all shadow-lg hover:shadow-xl cursor-pointer"
                 >
-                  Get Started
+                  Sign Up Now
                   <ArrowRight size={20} />
                 </button>
                 <a
