@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
@@ -20,9 +21,11 @@ import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import BlurCircle from '../components/shared/BlurCircle'
 import SEO, { localBusinessSchema } from '../components/shared/SEO'
+import EmployerSignupModal from '../components/shared/EmployerSignupModal'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
 
 export default function Partner() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const zeroCostBenefits = [
     {
       icon: Zap,
@@ -451,17 +454,17 @@ export default function Partner() {
                 Ready to Sign Up?
               </h2>
               <p className="text-body-lg text-mx-purple-100 mb-8">
-                Getting started is simple. Email us and we'll send you a secure onboarding link
+                Getting started is simple. Pop in your company details and we'll send you a secure onboarding link
                 to set up your employer account in minutes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="mailto:ben@millarx.com.au?subject=Employer%20Sign%20Up%20Request&body=Hi%20Ben%2C%0A%0AWe're%20interested%20in%20setting%20up%20novated%20leasing%20for%20our%20employees.%0A%0ACompany%20Name%3A%20%0AContact%20Name%3A%20%0AApprox%20Employee%20Count%3A%20%0A%0AThanks!"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold bg-white text-mx-purple-700 hover:bg-mx-purple-50 transition-all shadow-lg hover:shadow-xl"
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-semibold bg-white text-mx-purple-700 hover:bg-mx-purple-50 transition-all shadow-lg hover:shadow-xl cursor-pointer"
                 >
-                  Email to Get Started
+                  Get Started
                   <ArrowRight size={20} />
-                </a>
+                </button>
                 <a
                   href="/downloads/MillarX-SME-Employer-Guide.html"
                   target="_blank"
@@ -492,6 +495,12 @@ export default function Partner() {
           </div>
         </section>
       </div>
+
+      {/* Employer Signup Modal */}
+      <EmployerSignupModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   )
 }
