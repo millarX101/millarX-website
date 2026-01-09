@@ -3,6 +3,7 @@ import Layout from './components/layout/Layout'
 import NovatedLeasing from './pages/NovatedLeasing'
 import LeaseAnalysis from './pages/LeaseAnalysis'
 import Employers from './pages/Employers'
+import Partner from './pages/Partner'
 import EmployerGuide from './pages/EmployerGuide'
 import Contact from './pages/Contact'
 import Privacy from './pages/Privacy'
@@ -24,6 +25,7 @@ function App() {
           <Route path="/novated-leasing" element={<NovatedLeasing />} />
           <Route path="/lease-analysis" element={<LeaseAnalysis />} />
           <Route path="/employers" element={<Employers />} />
+          <Route path="/partner" element={<Partner />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />

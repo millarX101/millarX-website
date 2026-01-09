@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>millarX | SME Employer Novated Leasing Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mx-purple: #5b34c4;
+      --mx-purple-soft: #f5f3ff;
+      --mx-purple-soft-alt: #f1edff;
+      --mx-dark: #111827;
+      --mx-grey: #4b5563;
+      --mx-grey-light: #e5e7eb;
+      --mx-bg: #f4f4f5;
+      --card-radius: 14px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px; font-family: "Nunito Sans", sans-serif; background: var(--mx-bg); color: var(--mx-dark); }
+    .page { max-width: 1100px; margin: 0 auto; background: #ffffff; border-radius: 24px; padding: 24px 32px 28px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column; min-height: calc(100vh - 64px); }
+    header { margin-bottom: 8px; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    .brand-lockup { display: flex; align-items: center; gap: 18px; }
+    .logo { width: 72px; height: 72px; border-radius: 16px; object-fit: contain; background: #ffffff; padding: 4px; border: 1px solid var(--mx-grey-light); }
+    .brand-text-main { font-weight: 700; letter-spacing: 0.06em; font-size: 16px; text-transform: uppercase; color: var(--mx-purple); }
+    .brand-text-sub { font-size: 12px; color: var(--mx-grey); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; }
+    .contact-strip { font-size: 12px; color: var(--mx-grey); margin-top: 4px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .btn { border-radius: 999px; border: none; padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-outline { background: transparent; color: var(--mx-purple); border: 1px solid rgba(91, 52, 196, 0.35); }
+    h1 { font-size: 24px; color: var(--mx-dark); margin: 6px 0 4px; }
+    h2 { font-size: 17px; margin: 10px 0 5px; }
+    p { font-size: 13px; line-height: 1.6; margin: 4px 0 8px; }
+    .tagline { font-size: 13px; color: var(--mx-grey); margin-bottom: 8px; }
+    .mission { font-size: 13px; color: var(--mx-dark); background: var(--mx-purple-soft); border-radius: 12px; padding: 10px 12px; border: 1px solid #e0e7ff; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 18px; }
+    .card { background: #ffffff; border-radius: var(--card-radius); border: 1px solid var(--mx-grey-light); padding: 18px; box-shadow: 0 10px 26px rgba(15, 23, 42, 0.04); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+    .card-title { font-size: 15px; font-weight: 700; }
+    .pill { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: var(--mx-purple-soft-alt); color: var(--mx-purple); font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; white-space: nowrap; border: 1px solid #e0e7ff; }
+    .checklist-section { margin-bottom: 10px; padding: 8px 10px; border-radius: 10px; background: #f9fafb; border: 1px solid var(--mx-grey-light); font-size: 12px; page-break-inside: avoid; break-inside: avoid; }
+    .checklist-section ul { margin: 4px 0 0 18px; padding: 0; }
+    .checklist-section li { margin-bottom: 2px; }
+    .checklist-section.highlight { background: linear-gradient(135deg, var(--mx-purple-soft) 0%, #ede9fe 100%); border: 1px solid #c4b5fd; }
+    .checklist-section.highlight strong { color: var(--mx-purple); }
+    .note { font-size: 11px; color: var(--mx-grey); margin-top: 3px; margin-bottom: 0; }
+    footer { margin-top: 14px; border-top: 1px solid var(--mx-grey-light); padding-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 11px; color: var(--mx-grey); page-break-inside: avoid; break-inside: avoid; }
+    .footer-left { display: flex; align-items: center; gap: 10px; }
+    .footer-right { text-align: right; }
+    .footer-right strong { color: var(--mx-purple); }
+    a.link { color: var(--mx-purple); text-decoration: none; border-bottom: 1px solid rgba(91, 52, 196, 0.35); }
+    .page-break-before { page-break-before: always; break-before: page; }
+    @media print { .no-print { display: none !important; } body { padding: 0; background: white; } .page { box-shadow: none; border-radius: 0; padding: 20px; } }
+  </style>
+  <script>function printGuide() { window.print(); }</script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand-lockup">
+        <img src="https://millarx.com.au/millarx-logo.png" alt="millarX Logo" class="logo" />
+        <div>
+          <div class="brand-text-main">MILLARX | SME EMPLOYER GUIDE</div>
+          <div class="brand-text-sub">Novated Leasing - Transparent - Low Admin</div>
+          <div class="contact-strip">Contact: <strong>ben@MillarX.com.au</strong> - <strong>0492 886 857</strong></div>
+        </div>
+      </div>
+      <div class="toolbar no-print">
+        <button class="btn btn-outline" type="button" onclick="printGuide()">Print / Save as PDF</button>
+      </div>
+    </header>
+
+    <h1>Novated Leasing Support for SME Employers</h1>
+    <p class="tagline">How millarX makes novated leasing straightforward to administer for small and mid-sized businesses - without needing a full salary packaging team.</p>
+
+    <div class="mission">
+      <strong>Our mission at millarX</strong> is to make transparent novated leasing available to as many Australian workers as possible. The government concession behind novated leasing is designed so everyday Australians can keep more of their salary. Our job is to make sure the benefit is clear, fair and easy to access - not buried under complex, opaque pricing.
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">What millarX does for your business</div>
+          <span class="pill">Employer support</span>
+        </div>
+        <p>Our role is to remove as much complexity as possible so you can offer novated leasing as a genuine employee benefit, without turning it into a second job for your finance or HR team.</p>
+
+        <div class="checklist-section">
+          <strong>1. Simple employer onboarding</strong>
+          <ul>
+            <li>Short onboarding discussion to understand your payroll cycles and approval process.</li>
+            <li>Set up your company domain (e.g. <em>@yourcompany.com</em>) so only your staff can access DriveIQ.</li>
+            <li>Confirm who signs employer novation documentation and how you prefer to receive schedules.</li>
+          </ul>
+        </div>
+
+        <div class="checklist-section">
+          <strong>2. Self-serve quoting for staff</strong>
+          <ul>
+            <li>Your employees use our DriveIQ portal to build, compare and save their own quotes.</li>
+            <li>They can adjust vehicles and terms and see clear "cost to pocket per pay" before making decisions.</li>
+            <li>millarX handles finance discussions, applications and documentation directly with the employee.</li>
+          </ul>
+        </div>
+
+        <div class="checklist-section">
+          <strong>3. Clear, lightweight admin for you</strong>
+          <ul>
+            <li>We provide a simple schedule for payroll with the agreed pre- and post-tax deductions.</li>
+            <li>We send standard documentation packs for your authorised signatory (novation agreement etc.).</li>
+            <li>We guide you through starters, leavers and changes so you never have to "work it out" alone.</li>
+          </ul>
+        </div>
+
+        <div class="checklist-section">
+          <strong>4. Powered by proven lease management</strong>
+          <ul>
+            <li>Our back end is powered by <strong>Catch-e</strong>, an industry-leading novated lease management system used across Australia.</li>
+            <li>This means your employees get millarX transparency on the front end, backed by a tried-and-tested operational platform in the background.</li>
+            <li>You get the reassurance that payments, reconciliations and lease records sit on proven infrastructure, not a home-grown spreadsheet.</li>
+          </ul>
+        </div>
+
+        <div class="checklist-section highlight" style="margin-top: 20px;">
+          <strong>5. Your own Employer Portal</strong>
+          <ul>
+            <li><strong>Welcome new staff</strong> - send branded novated leasing communications to new employees with a few clicks.</li>
+            <li><strong>Existing lease onboarding</strong> - help staff who already have a novated lease with another provider transfer smoothly into your program.</li>
+            <li><strong>Cessation support</strong> - manage the end-of-employment process with guided steps for you and your departing employee.</li>
+            <li><strong>Engagement dashboard</strong> - see at a glance how many staff are using the benefit and track program activity.</li>
+            <li><strong>User guides & resources</strong> - access help documents, FAQs, and step-by-step guides whenever you need them.</li>
+            <li><strong>More features coming</strong> - we're continuously improving the portal with new tools over the next six months.</li>
+          </ul>
+        </div>
+
+        <p class="note">For most SMEs, if you can <strong>set up a payroll deduction and pay an invoice</strong>, you already have everything you need to run a successful novated leasing program with millarX. We handle the specialist pieces.</p>
+      </section>
+    </div>
+
+    <footer>
+      <div class="footer-left">
+        <span>millarX Pty Ltd | ABN 73 676 519 649 | Credit Representative 564125</span>
+      </div>
+      <div class="footer-right">
+        <strong>millarx.com.au</strong> | ben@millarx.com.au | 0492 886 857
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

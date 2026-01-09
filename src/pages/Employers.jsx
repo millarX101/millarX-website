@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   CheckCircle,
@@ -198,12 +199,16 @@ export default function Employers() {
                 variants={fadeInUp}
                 className="flex flex-col sm:flex-row gap-4"
               >
-                <Button size="lg" icon={<ArrowRight size={20} />} iconPosition="right">
-                  Partner With Us
-                </Button>
-                <Button size="lg" variant="secondary" icon={<Download size={20} />}>
-                  Download Info Pack
-                </Button>
+                <Link to="/partner">
+                  <Button size="lg" icon={<ArrowRight size={20} />} iconPosition="right">
+                    Partner With Us
+                  </Button>
+                </Link>
+                <a href="/downloads/MillarX-SME-Employer-Guide.html" target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" variant="secondary" icon={<Download size={20} />}>
+                    Download Info Pack
+                  </Button>
+                </a>
               </motion.div>
             </motion.div>
 
