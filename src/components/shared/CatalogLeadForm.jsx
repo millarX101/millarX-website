@@ -5,7 +5,7 @@ import Modal from '../ui/Modal'
 import Input from '../ui/Input'
 import Button from '../ui/Button'
 import Honeypot, { isSpamSubmission } from '../ui/Honeypot'
-import { saveCatalogLead } from '../../lib/supabase'
+import { saveQuoteRequest } from '../../lib/supabase'
 
 export default function CatalogLeadForm({ isOpen, onClose, selectedVehicle }) {
   const [formData, setFormData] = useState({
@@ -30,16 +30,58 @@ export default function CatalogLeadForm({ isOpen, onClose, selectedVehicle }) {
     }
     setLoading(true)
     try {
-      await saveCatalogLead({
+      const vehicleDescription = selectedVehicle
+        ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`
+        : 'Not specified - needs help choosing'
+
+      const fuelType = selectedVehicle?.fuel_type === 'Hybrid' ? 'Hybrid' : 'Electric Vehicle'
+      const price = selectedVehicle?.drive_away_price || selectedVehicle?.rrp || 0
+
+      // Use the same data shape as QuoteForm so the full pipeline works
+      await saveQuoteRequest({
+        // Contact details
         name: formData.name,
         email: formData.email,
         phone: formData.phone || null,
+
+        // Employment details (not collected, but required by pipeline)
+        employer: 'Not provided',
+        state: 'NSW',
+
+        // Vehicle details
         vehicle_make: selectedVehicle?.make || null,
         vehicle_model: selectedVehicle?.model || null,
-        vehicle_description: selectedVehicle
-          ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`
-          : 'Not specified - needs help choosing',
-        fuel_type: selectedVehicle?.fuel_type || null,
+        vehicle_variant: selectedVehicle?.trim || null,
+        vehicle_description: vehicleDescription,
+        need_sourcing_help: 'yes',
+
+        // Calculator inputs snapshot
+        calculation_inputs: {
+          vehiclePrice: price,
+          annualSalary: 0,
+          leaseTermYears: 3,
+          fuelType,
+          annualKm: 15000,
+          state: 'NSW',
+          payPeriod: 'monthly',
+          selectedEV: vehicleDescription,
+        },
+
+        // Calculator results (zeroed - no calc was run)
+        calculation_results: {
+          annualTaxSavings: 0,
+          netCostPerPeriod: 0,
+          totalCostPerPeriod: 0,
+          driveAwayPrice: price,
+          residualValue: 0,
+          fbtExempt: fuelType === 'Electric Vehicle',
+          monthlyFinance: 0,
+          monthlyRunningCosts: 0,
+          monthlyFBT: 0,
+        },
+
+        // Tracking
+        source: 'millarx-website',
         source_page: '/browse-evs',
         utm_source: new URLSearchParams(window.location.search).get('utm_source'),
         utm_medium: new URLSearchParams(window.location.search).get('utm_medium'),
