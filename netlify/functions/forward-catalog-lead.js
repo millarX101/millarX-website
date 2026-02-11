@@ -26,8 +26,8 @@ exports.handler = async (event, context) => {
   try {
     const payload = JSON.parse(event.body)
 
-    // Forward to mxDriveIQ catalog leads endpoint
-    const response = await fetch('https://mxdriveiq.com.au/api/leads/catalog', {
+    // Forward directly to Render (bypasses Cloudflare/Netlify on mxdriveiq.com.au)
+    const response = await fetch('https://mxchatbot.onrender.com/api/leads/catalog', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
