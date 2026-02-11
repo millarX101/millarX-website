@@ -152,7 +152,7 @@ async function sendCatalogLead(payload) {
     ...payload,
   }
 
-  const response = await fetch('/.netlify/functions/forward-catalog-lead', {
+  const response = await fetch('/.netlify/functions/forward-lead', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(catalogPayload),

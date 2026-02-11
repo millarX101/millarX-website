@@ -26,8 +26,12 @@ exports.handler = async (event, context) => {
   try {
     const payload = JSON.parse(event.body)
 
-    // Forward to mxDriveIQ API
-    const response = await fetch('https://mxchatbot.onrender.com/api/leads/website', {
+    // Route to different endpoints based on lead type
+    const endpoint = payload.lead_type === 'catalog_inquiry'
+      ? 'https://mxdriveiq.com.au/api/leads/catalog'
+      : 'https://mxchatbot.onrender.com/api/leads/website'
+
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
