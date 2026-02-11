@@ -111,6 +111,92 @@ export async function saveQuoteRequest(data) {
     console.error('Error forwarding to mxDriveIQ:', err)
   }
 
+  // If user wants sourcing help, also send a catalog lead
+  if (data.need_sourcing_help === 'yes') {
+    try {
+      await sendCatalogLead({
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        vehicle_make: data.vehicle_make || null,
+        vehicle_model: data.vehicle_model || null,
+        vehicle_variant: data.vehicle_variant || null,
+        vehicle_year: null,
+        vehicle_description: data.vehicle_description || null,
+        fuel_type: normalizeFuelType(data.calculation_inputs?.fuelType),
+        drive_away_price: data.calculation_inputs?.vehiclePrice || 0,
+        body_style: null,
+        need_sourcing_help: true,
+        from_calculator: true,
+        source: data.source || 'millarx-website',
+        source_page: data.source_page,
+        utm_source: data.utm_source,
+        utm_medium: data.utm_medium,
+        utm_campaign: data.utm_campaign,
+      })
+    } catch (err) {
+      console.error('Error sending catalog lead from quote:', err)
+    }
+  }
+
+  return { data: null, error: null }
+}
+
+/**
+ * Send a catalog/vehicle lead to the dedicated catalog endpoint
+ * Used by both saveCatalogLead() and saveQuoteRequest() (when sourcing help requested)
+ */
+async function sendCatalogLead(payload) {
+  const catalogPayload = {
+    lead_type: 'catalog_inquiry',
+    ...payload,
+  }
+
+  const response = await fetch('/.netlify/functions/forward-catalog-lead', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(catalogPayload),
+  })
+
+  if (!response.ok) {
+    console.error('Catalog lead API error:', await response.text())
+  } else {
+    console.log('Catalog lead forwarded successfully')
+  }
+
+  return response
+}
+
+/**
+ * Save a catalog/vehicle inquiry — forwards to dedicated catalog endpoint
+ * Used by CatalogLeadForm ("Help Me Buy This" button)
+ */
+export async function saveCatalogLead(data) {
+  try {
+    await sendCatalogLead({
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      vehicle_make: data.vehicle_make || null,
+      vehicle_model: data.vehicle_model || null,
+      vehicle_variant: data.vehicle_variant || null,
+      vehicle_year: data.vehicle_year || null,
+      vehicle_description: data.vehicle_description || null,
+      fuel_type: normalizeFuelType(data.fuel_type),
+      drive_away_price: data.drive_away_price || 0,
+      body_style: data.body_style || null,
+      need_sourcing_help: true,
+      from_calculator: false,
+      source: data.source || 'millarx-website',
+      source_page: data.source_page || '/browse-evs',
+      utm_source: data.utm_source,
+      utm_medium: data.utm_medium,
+      utm_campaign: data.utm_campaign,
+    })
+  } catch (err) {
+    console.error('Error saving catalog lead:', err)
+  }
+
   return { data: null, error: null }
 }
 
