@@ -151,6 +151,8 @@ export function generateId() {
 export function scrollToElement(elementId) {
   const element = document.getElementById(elementId)
   if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const headerOffset = 88 // sticky header height + small buffer
+    const elementPosition = element.getBoundingClientRect().top + window.scrollY
+    window.scrollTo({ top: elementPosition - headerOffset, behavior: 'smooth' })
   }
 }
