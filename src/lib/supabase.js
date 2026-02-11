@@ -252,6 +252,69 @@ export async function saveContactSubmission(data) {
   return { data: null, error: null }
 }
 
+/**
+ * Save a catalog lead (help me buy this car) to the database AND forward to mxDriveIQ
+ */
+export async function saveCatalogLead(data) {
+  // Save to local Supabase (reuses quote_requests table)
+  if (supabase) {
+    const { error } = await supabase
+      .from('quote_requests')
+      .insert([{
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        vehicle_make: data.vehicle_make || null,
+        vehicle_model: data.vehicle_model || null,
+        vehicle_description: data.vehicle_description || null,
+        need_sourcing_help: true,
+        source: 'millarx-website',
+        source_page: data.source_page || '/browse-evs',
+        status: data.status || 'new',
+      }])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error saving catalog lead:', error)
+    }
+  }
+
+  // Forward to mxDriveIQ via Netlify function
+  const mxDriveIQPayload = {
+    lead_type: 'catalog_inquiry',
+    name: data.name,
+    email: data.email,
+    phone: data.phone || null,
+    vehicle_make: data.vehicle_make || null,
+    vehicle_model: data.vehicle_model || null,
+    vehicle_description: data.vehicle_description || null,
+    fuel_type: data.fuel_type || null,
+    need_sourcing_help: true,
+    source: 'millarx-website',
+    source_page: data.source_page || '/browse-evs',
+    utm_source: data.utm_source,
+    utm_medium: data.utm_medium,
+    utm_campaign: data.utm_campaign,
+  }
+
+  try {
+    const response = await fetch('/.netlify/functions/forward-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+
+    if (!response.ok) {
+      console.error('mxDriveIQ API error:', await response.text())
+    }
+  } catch (err) {
+    console.error('Error forwarding catalog lead:', err)
+  }
+
+  return { data: null, error: null }
+}
+
 export default supabase
 
 // ============================================

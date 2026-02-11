@@ -1,17 +1,22 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Zap, Calendar, ArrowLeft, Car, Loader2, AlertCircle } from 'lucide-react'
+import { Zap, Calendar, ArrowLeft, Car, Loader2, AlertCircle, Fuel, Phone } from 'lucide-react'
 import { fetchEVCatalog } from '../lib/supabase'
 import SEO, { localBusinessSchema } from '../components/shared/SEO'
 import Button from '../components/ui/Button'
+import CatalogLeadForm from '../components/shared/CatalogLeadForm'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
+import { cn } from '../lib/utils'
 
 export default function BrowseEVs() {
   const navigate = useNavigate()
   const [evs, setEvs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [filter, setFilter] = useState('all')
+  const [showLeadForm, setShowLeadForm] = useState(false)
+  const [selectedVehicleForLead, setSelectedVehicleForLead] = useState(null)
 
   useEffect(() => {
     async function loadEVs() {
@@ -36,6 +41,8 @@ export default function BrowseEVs() {
       ? ev.special_price
       : ev.drive_away_price || ev.rrp
 
+    const fuelType = ev.fuel_type === 'Hybrid' ? 'Hybrid' : 'Electric'
+
     // Navigate to calculator with vehicle data
     navigate('/novated-leasing', {
       state: {
@@ -45,13 +52,24 @@ export default function BrowseEVs() {
           year: ev.year,
           trim: ev.trim || '',
           price: price,
-          fuelType: 'Electric',
+          fuelType,
           bodyStyle: ev.body_style || 'Sedan',
           fbtExempt: ev.fbt_exempt !== false
         }
       }
     })
   }
+
+  // Filtered vehicles
+  const filteredEVs = evs.filter(ev => {
+    if (filter === 'all') return true
+    if (filter === 'electric') return ev.fuel_type === 'Electric' || !ev.fuel_type
+    if (filter === 'hybrid') return ev.fuel_type === 'Hybrid'
+    return true
+  })
+
+  const electricCount = evs.filter(ev => ev.fuel_type === 'Electric' || !ev.fuel_type).length
+  const hybridCount = evs.filter(ev => ev.fuel_type === 'Hybrid').length
 
   const formatCurrency = (amount) => {
     if (!amount) return '$0'
@@ -72,8 +90,8 @@ export default function BrowseEVs() {
   return (
     <>
       <SEO
-        title="FBT-Exempt EVs Under $91,387 | Tesla, BYD, Kia Novated Lease Australia"
-        description="Browse FBT-exempt electric vehicles with fixed drive-away pricing. Tesla, BYD, BMW & more EVs. Get instant novated lease quotes with real tax savings calculated. Updated 2025 prices."
+        title="EVs & Hybrid Vehicles | Novated Lease Australia"
+        description="Browse electric and hybrid vehicles with fixed drive-away pricing. Tesla, BYD, BMW & more. Get instant novated lease quotes with real tax savings calculated."
         canonical="/browse-evs"
         structuredData={{
           '@context': 'https://schema.org',
@@ -81,8 +99,8 @@ export default function BrowseEVs() {
             localBusinessSchema,
             {
               '@type': 'ItemList',
-              'name': 'FBT-Exempt Electric Vehicles for Novated Leasing',
-              'description': 'Electric vehicles available for novated leasing in Australia with FBT exemption',
+              'name': 'Electric & Hybrid Vehicles for Novated Leasing',
+              'description': 'Electric and hybrid vehicles available for novated leasing in Australia',
               'itemListElement': evs.slice(0, 10).map((ev, index) => ({
                 '@type': 'ListItem',
                 'position': index + 1,
@@ -92,7 +110,7 @@ export default function BrowseEVs() {
                   'brand': { '@type': 'Brand', 'name': ev.make },
                   'model': ev.model,
                   'vehicleModelDate': ev.year?.toString(),
-                  'fuelType': 'Electric',
+                  'fuelType': ev.fuel_type === 'Hybrid' ? 'HybridElectric' : 'Electric',
                   'offers': {
                     '@type': 'Offer',
                     'price': ev.drive_away_price || ev.rrp,
@@ -122,11 +140,11 @@ export default function BrowseEVs() {
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
                 <Zap className="text-mx-pink-400" size={24} />
               </div>
-              <h1 className="text-display-md font-serif">Browse Electric Vehicles</h1>
+              <h1 className="text-display-md font-serif">Browse Vehicles</h1>
             </div>
 
             <p className="text-body-lg text-mx-purple-100 max-w-2xl">
-              Fixed pricing on popular EVs. Select a vehicle to get an instant novated lease quote
+              Fixed pricing on popular EVs and Hybrids. Select a vehicle to get an instant novated lease quote
               with your real tax savings calculated.
             </p>
           </div>
@@ -155,8 +173,50 @@ export default function BrowseEVs() {
               </div>
             ) : (
               <>
+                {/* Filter Tabs */}
+                <div className="flex flex-wrap gap-3 mb-6">
+                  <button
+                    onClick={() => setFilter('all')}
+                    className={cn(
+                      'px-5 py-2.5 rounded-full font-medium text-sm transition-all',
+                      filter === 'all'
+                        ? 'bg-mx-purple-600 text-white shadow-md'
+                        : 'bg-white text-mx-slate-600 border border-mx-slate-200 hover:border-mx-purple-300'
+                    )}
+                  >
+                    All Vehicles ({evs.length})
+                  </button>
+                  <button
+                    onClick={() => setFilter('electric')}
+                    className={cn(
+                      'px-5 py-2.5 rounded-full font-medium text-sm transition-all flex items-center gap-2',
+                      filter === 'electric'
+                        ? 'bg-teal-500 text-white shadow-md'
+                        : 'bg-white text-mx-slate-600 border border-mx-slate-200 hover:border-teal-300'
+                    )}
+                  >
+                    <Zap size={16} />
+                    Electric ({electricCount})
+                  </button>
+                  {hybridCount > 0 && (
+                    <button
+                      onClick={() => setFilter('hybrid')}
+                      className={cn(
+                        'px-5 py-2.5 rounded-full font-medium text-sm transition-all flex items-center gap-2',
+                        filter === 'hybrid'
+                          ? 'bg-blue-500 text-white shadow-md'
+                          : 'bg-white text-mx-slate-600 border border-mx-slate-200 hover:border-blue-300'
+                      )}
+                    >
+                      <Fuel size={16} />
+                      Hybrid ({hybridCount})
+                    </button>
+                  )}
+                </div>
+
                 <p className="text-body text-mx-slate-600 mb-8">
-                  Showing {evs.length} vehicle{evs.length !== 1 ? 's' : ''}
+                  Showing {filteredEVs.length} vehicle{filteredEVs.length !== 1 ? 's' : ''}
+                  {filter !== 'all' && ` (${filter})`}
                 </p>
 
                 <motion.div
@@ -165,7 +225,7 @@ export default function BrowseEVs() {
                   animate="animate"
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
-                  {evs.map((ev) => {
+                  {filteredEVs.map((ev) => {
                     const displayPrice = ev.is_special && ev.special_price
                       ? ev.special_price
                       : ev.drive_away_price || ev.rrp
@@ -198,6 +258,12 @@ export default function BrowseEVs() {
                               <div className="px-3 py-1 bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-body-sm font-medium rounded-full flex items-center gap-1 w-fit shadow-sm">
                                 <Zap size={14} />
                                 FBT Exempt
+                              </div>
+                            )}
+                            {ev.fuel_type === 'Hybrid' && (
+                              <div className="px-3 py-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-body-sm font-medium rounded-full flex items-center gap-1 w-fit shadow-sm">
+                                <Fuel size={14} />
+                                Hybrid
                               </div>
                             )}
                             {hasSpecial && ev.special_text && (
@@ -257,7 +323,17 @@ export default function BrowseEVs() {
                               className="w-full px-4 py-3 bg-gradient-to-r from-mx-purple-700 to-mx-pink-500 hover:from-mx-purple-800 hover:to-mx-pink-600 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                             >
                               <Zap size={18} />
-                              Get Quote at Special Price
+                              {hasSpecial ? 'Get Quote at Special Price' : 'Get Instant Quote'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedVehicleForLead(ev)
+                                setShowLeadForm(true)
+                              }}
+                              className="w-full px-4 py-2.5 bg-white border-2 border-mx-purple-200 hover:border-mx-purple-400 text-mx-purple-700 font-medium rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
+                            >
+                              <Phone size={16} />
+                              Help Me Buy This
                             </button>
                           </div>
                         </div>
@@ -274,7 +350,7 @@ export default function BrowseEVs() {
         <section className="py-12 bg-mx-slate-50 border-t border-mx-slate-200">
           <div className="container-narrow mx-auto px-4 text-center">
             <p className="text-body text-mx-slate-600 mb-4">
-              Can't find what you're looking for? We can source any electric vehicle.
+              Can't find what you're looking for? We can source any electric or hybrid vehicle.
               {' '}Or explore pre-owned options through{' '}
               <a
                 href="https://www.landedx.com.au"
@@ -294,6 +370,16 @@ export default function BrowseEVs() {
           </div>
         </section>
       </div>
+
+      {/* Lead Capture Modal */}
+      <CatalogLeadForm
+        isOpen={showLeadForm}
+        onClose={() => {
+          setShowLeadForm(false)
+          setSelectedVehicleForLead(null)
+        }}
+        selectedVehicle={selectedVehicleForLead}
+      />
     </>
   )
 }

@@ -45,6 +45,7 @@ export const BASE_REGISTRATION = 900
 // Running cost base multipliers by vehicle type
 export const RUNNING_COST_MULTIPLIERS = {
   'Electric Vehicle': 0.85,
+  'Hybrid': 0.92,
   'Large Ute': 1.15,
   'SUV': 0.95,
   'Hatch': 0.90,
@@ -65,7 +66,8 @@ export const FUEL_CONSUMPTION = {
   'Ute': 12,
   'SUV': 11,
   'Sedan': 8.5,
-  'Hatch': 8
+  'Hatch': 8,
+  'Hybrid': 6
 }
 
 // Fuel price per litre
@@ -73,6 +75,10 @@ export const FUEL_PRICE = 2.10
 
 // EV electricity cost per km
 export const EV_COST_PER_KM = 0.042
+
+// Hybrid blended cost calculation
+export const HYBRID_EV_USAGE_RATIO = 0.55      // 55% of driving assumed electric
+export const HYBRID_PETROL_CONSUMPTION = 6      // L/100km when running on petrol
 
 // Tyres cost per set and km interval
 export const TYRES_COST_PER_SET = 1200
@@ -107,6 +113,7 @@ export const POPULAR_EVS = {
 // Vehicle types
 export const VEHICLE_TYPES = [
   'Electric Vehicle',
+  'Hybrid',
   'SUV',
   'Ute',
   'Large Ute',

@@ -35,12 +35,13 @@ export default function Calculator({ source = 'website', showAdvanced = false })
   useEffect(() => {
     if (location.state?.vehicleData) {
       const { vehicleData } = location.state
+      const fuelType = vehicleData.fuelType === 'Hybrid' ? 'Hybrid' : 'Electric Vehicle'
       setInputs(prev => ({
         ...prev,
         vehiclePrice: vehicleData.price || prev.vehiclePrice,
-        fuelType: 'Electric Vehicle',
+        fuelType,
         selectedEV: `${vehicleData.make} ${vehicleData.model} ${vehicleData.trim || ''}`.trim(),
-        isOnRoadPriceIncluded: true, // EV catalog prices are drive-away
+        isOnRoadPriceIncluded: true, // Catalog prices are drive-away
         // Store structured vehicle data for quote form pre-fill
         vehicleMake: vehicleData.make || '',
         vehicleModel: vehicleData.model || '',
@@ -75,8 +76,8 @@ export default function Calculator({ source = 'website', showAdvanced = false })
         newInputs.isOnRoadPriceIncluded = false
       }
 
-      // If changing fuel type away from EV, reset selected EV
-      if (key === 'fuelType' && value !== 'Electric Vehicle') {
+      // If changing fuel type away from EV/Hybrid, reset selected EV
+      if (key === 'fuelType' && value !== 'Electric Vehicle' && value !== 'Hybrid') {
         newInputs.selectedEV = ''
       }
 

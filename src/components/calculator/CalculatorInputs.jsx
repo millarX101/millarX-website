@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronDown, ChevronUp, Zap, Car, Search } from 'lucide-react'
+import { ChevronDown, ChevronUp, Zap, Car, Search, Fuel } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CurrencySlider, KilometerSlider, YearSlider } from '../ui/Slider'
 import Select from '../ui/Select'
@@ -19,6 +19,7 @@ import {
 export default function CalculatorInputs({ inputs, updateInput, showAdvanced = false }) {
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(showAdvanced)
   const isEV = inputs.fuelType === 'Electric Vehicle'
+  const isHybrid = inputs.fuelType === 'Hybrid'
 
   // Convert popular EVs to options format
   const popularEVOptions = [
@@ -57,32 +58,45 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           <label className="block text-body font-medium text-mx-slate-700 mb-3">
             Vehicle Type
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <button
               type="button"
               onClick={() => updateInput('fuelType', 'Electric Vehicle')}
               className={cn(
-                'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all',
+                'flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-lg border-2 transition-all',
                 isEV
                   ? 'border-mx-purple-500 bg-mx-purple-50 text-mx-purple-700'
                   : 'border-mx-slate-200 hover:border-mx-slate-300 text-mx-slate-600'
               )}
             >
               <Zap size={20} />
-              <span className="font-medium">Electric</span>
+              <span className="font-medium text-sm">Electric</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => updateInput('fuelType', 'Hybrid')}
+              className={cn(
+                'flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-lg border-2 transition-all',
+                isHybrid
+                  ? 'border-mx-purple-500 bg-mx-purple-50 text-mx-purple-700'
+                  : 'border-mx-slate-200 hover:border-mx-slate-300 text-mx-slate-600'
+              )}
+            >
+              <Fuel size={20} />
+              <span className="font-medium text-sm">Hybrid</span>
             </button>
             <button
               type="button"
               onClick={() => updateInput('fuelType', 'SUV')}
               className={cn(
-                'flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all',
-                !isEV
+                'flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-lg border-2 transition-all',
+                !isEV && !isHybrid
                   ? 'border-mx-purple-500 bg-mx-purple-50 text-mx-purple-700'
                   : 'border-mx-slate-200 hover:border-mx-slate-300 text-mx-slate-600'
               )}
             >
               <Car size={20} />
-              <span className="font-medium">Petrol/Diesel</span>
+              <span className="font-medium text-sm">Petrol/Diesel</span>
             </button>
           </div>
         </div>
@@ -101,8 +115,8 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           </motion.div>
         )}
 
-        {/* Browse EVs Button (only for EVs) */}
-        {isEV && (
+        {/* Browse Vehicles Button (for EVs and Hybrids) */}
+        {(isEV || isHybrid) && (
           <div>
             <label className="flex items-center gap-2 text-body font-medium text-mx-slate-700 mb-3">
               <Car size={20} className="text-mx-purple-600" />
@@ -113,20 +127,20 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
               className="flex items-center justify-center gap-3 w-full px-6 py-4 rounded-xl font-semibold text-white bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 transition-all shadow-md hover:shadow-lg"
             >
               <Search size={20} />
-              Browse Electric Vehicles
+              Browse Vehicles
               <Zap size={20} />
             </Link>
             <p className="text-body-sm text-mx-slate-500 mt-2 text-center">
-              View our complete EV catalogue with competitive pricing
+              View our EV and hybrid catalogue with competitive pricing
             </p>
           </div>
         )}
 
-        {/* Non-EV Vehicle Type Selection */}
-        {!isEV && (
+        {/* Non-EV/Hybrid Vehicle Type Selection */}
+        {!isEV && !isHybrid && (
           <Select
             label="Vehicle Category"
-            options={vehicleTypeOptions.filter(o => o.value !== 'Electric Vehicle')}
+            options={vehicleTypeOptions.filter(o => o.value !== 'Electric Vehicle' && o.value !== 'Hybrid')}
             value={inputs.fuelType}
             onChange={(e) => updateInput('fuelType', e.target.value)}
           />

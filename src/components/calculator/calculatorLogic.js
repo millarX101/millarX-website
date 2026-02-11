@@ -10,6 +10,8 @@ import {
   FUEL_CONSUMPTION,
   FUEL_PRICE,
   EV_COST_PER_KM,
+  HYBRID_EV_USAGE_RATIO,
+  HYBRID_PETROL_CONSUMPTION,
   TYRES_COST_PER_SET,
   TYRES_KM_INTERVAL,
   PAY_PERIODS,
@@ -80,7 +82,8 @@ export function calculateLease(inputs) {
   } = inputs
 
   const isEV = fuelType === 'Electric Vehicle' || fuelType === 'ev'
-  const carType = isEV ? 'Electric Vehicle' : fuelType
+  const isHybrid = fuelType === 'Hybrid'
+  const carType = isEV ? 'Electric Vehicle' : (isHybrid ? 'Hybrid' : fuelType)
 
   // Handle on-road costs with accurate state-based calculations
   let baseVehiclePrice, driveAwayPrice, onRoadCosts, stamp, rego
@@ -133,6 +136,13 @@ export function calculateLease(inputs) {
   let fuelCost
   if (isEV) {
     fuelCost = annualKm * EV_COST_PER_KM
+  } else if (isHybrid) {
+    // Blended cost: 55% electric + 45% petrol
+    const electricKm = annualKm * HYBRID_EV_USAGE_RATIO
+    const petrolKm = annualKm * (1 - HYBRID_EV_USAGE_RATIO)
+    const electricCost = electricKm * EV_COST_PER_KM
+    const petrolCost = (petrolKm / 100) * HYBRID_PETROL_CONSUMPTION * FUEL_PRICE
+    fuelCost = electricCost + petrolCost
   } else {
     const lph = FUEL_CONSUMPTION[carType] || 10
     fuelCost = (annualKm / 100) * lph * FUEL_PRICE
@@ -235,7 +245,7 @@ export function calculateLease(inputs) {
         savings: incomeTaxSavings * (annualLeasePayment / totalAnnualCost),
       },
       {
-        category: isEV ? 'Electricity' : 'Fuel',
+        category: isEV ? 'Electricity' : (isHybrid ? 'Fuel (Blended)' : 'Fuel'),
         preTaxAnnual: fuelCost * multiplier,
         postTaxAnnual: fuelCost * multiplier * 0.7,
         savings: fuelCost * multiplier * 0.3,
@@ -275,6 +285,7 @@ export function calculateLease(inputs) {
       state,
       payPeriod,
       isEV,
+      isHybrid,
     },
   }
 }
