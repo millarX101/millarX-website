@@ -88,6 +88,9 @@ export async function saveQuoteRequest(data) {
     calculation_inputs: data.calculation_inputs,
     calculation_results: data.calculation_results,
     need_sourcing_help: data.need_sourcing_help || null,
+    comments: data.need_sourcing_help === 'yes'
+      ? `Customer wants help sourcing: ${data.vehicle_description || 'vehicle not specified'}`
+      : null,
     source: data.source || 'millarx-website',
     source_page: data.source_page,
     utm_source: data.utm_source,
