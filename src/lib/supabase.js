@@ -104,8 +104,6 @@ export async function saveQuoteRequest(data) {
 
     if (!response.ok) {
       console.error('mxDriveIQ API error:', await response.text())
-    } else {
-      console.log('Lead forwarded to mxDriveIQ successfully')
     }
   } catch (err) {
     console.error('Error forwarding to mxDriveIQ:', err)
@@ -160,8 +158,6 @@ async function sendCatalogLead(payload) {
 
   if (!response.ok) {
     console.error('Catalog lead API error:', await response.text())
-  } else {
-    console.log('Catalog lead forwarded successfully')
   }
 
   return response
@@ -387,7 +383,7 @@ export async function saveAnalysisData(data) {
  */
 export async function fetchEVCatalog() {
   if (!mxDriveIQSupabase) {
-    console.warn('mxDriveIQ Supabase not configured, returning empty catalog')
+    // mxDriveIQ Supabase not configured
     return { data: [], error: null }
   }
 
@@ -422,7 +418,7 @@ export function getMediaUrl(path) {
 
   // If Supabase not configured, return path as fallback (for local dev)
   if (!supabase) {
-    console.warn('Supabase not configured, using local fallback for:', path)
+    // Supabase not configured, using local fallback
     return `/assets/${path}`
   }
 
