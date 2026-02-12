@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Zap, Calendar, ArrowLeft, Car, Loader2, AlertCircle, Fuel, Phone, Search, X } from 'lucide-react'
 import { fetchEVCatalog } from '../lib/supabase'
+import { calculateStampDuty } from '../utils/stampDutyCalculator'
+import { getAnnualRegistration } from '../utils/registrationCalculator'
 import SEO, { localBusinessSchema } from '../components/shared/SEO'
 import Button from '../components/ui/Button'
 import CatalogLeadForm from '../components/shared/CatalogLeadForm'
@@ -16,6 +18,7 @@ export default function BrowseEVs() {
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [selectedState, setSelectedState] = useState('VIC')
   const [showLeadForm, setShowLeadForm] = useState(false)
   const [selectedVehicleForLead, setSelectedVehicleForLead] = useState(null)
 
@@ -37,14 +40,15 @@ export default function BrowseEVs() {
   }, [])
 
   const handleSelectEV = (ev) => {
-    // Determine the price to use (special price if active, otherwise drive-away)
+    // Determine the price to use (special price if active, otherwise state-specific drive-away)
+    const statePrice = getDriveAwayPrice(ev)
     const price = ev.is_special && ev.special_price
       ? ev.special_price
-      : ev.drive_away_price || ev.rrp
+      : statePrice || ev.drive_away_price || ev.rrp
 
     const fuelType = ev.fuel_type === 'Hybrid' ? 'Hybrid' : 'Electric'
 
-    // Navigate to calculator with vehicle data
+    // Navigate to calculator with vehicle data and selected state
     navigate('/novated-leasing', {
       state: {
         vehicleData: {
@@ -55,7 +59,8 @@ export default function BrowseEVs() {
           price: price,
           fuelType,
           bodyStyle: ev.body_style || 'Sedan',
-          fbtExempt: ev.fbt_exempt !== false
+          fbtExempt: ev.fbt_exempt !== false,
+          selectedState,
         }
       }
     })
@@ -80,6 +85,21 @@ export default function BrowseEVs() {
 
   const electricCount = evs.filter(ev => ev.fuel_type === 'Electric' || !ev.fuel_type).length
   const hybridCount = evs.filter(ev => ev.fuel_type === 'Hybrid').length
+
+  const STATES = ['VIC', 'NSW', 'QLD', 'SA', 'WA', 'TAS', 'ACT', 'NT']
+
+  // Calculate state-specific drive-away price from RRP
+  const getDriveAwayPrice = (ev) => {
+    const basePrice = ev.rrp || ev.drive_away_price || 0
+    if (!basePrice) return 0
+
+    const isEV = ev.fuel_type === 'Electric' || !ev.fuel_type
+    const isHybrid = ev.fuel_type === 'Hybrid'
+    const stampDuty = calculateStampDuty(selectedState, basePrice, isEV, isHybrid)
+    const rego = getAnnualRegistration(selectedState, isEV)
+
+    return Math.round(basePrice + stampDuty + rego)
+  }
 
   const formatCurrency = (amount) => {
     if (!amount) return '$0'
@@ -224,24 +244,35 @@ export default function BrowseEVs() {
                   )}
                 </div>
 
-                {/* Search Bar */}
-                <div className="relative mb-6">
-                  <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-mx-slate-400" />
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search by make, model, or price..."
-                    className="w-full pl-12 pr-10 py-3 bg-white border-2 border-mx-slate-200 rounded-xl text-body text-mx-slate-700 placeholder:text-mx-slate-400 focus:border-mx-purple-500 focus:ring-2 focus:ring-mx-purple-100 focus:outline-none transition-colors"
-                  />
-                  {search && (
-                    <button
-                      onClick={() => setSearch('')}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-mx-slate-400 hover:text-mx-slate-600 transition-colors"
-                    >
-                      <X size={18} />
-                    </button>
-                  )}
+                {/* Search Bar + State Selector */}
+                <div className="flex gap-3 mb-6">
+                  <div className="relative flex-1">
+                    <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-mx-slate-400" />
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Search by make, model, or price..."
+                      className="w-full pl-12 pr-10 py-3 bg-white border-2 border-mx-slate-200 rounded-xl text-body text-mx-slate-700 placeholder:text-mx-slate-400 focus:border-mx-purple-500 focus:ring-2 focus:ring-mx-purple-100 focus:outline-none transition-colors"
+                    />
+                    {search && (
+                      <button
+                        onClick={() => setSearch('')}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-mx-slate-400 hover:text-mx-slate-600 transition-colors"
+                      >
+                        <X size={18} />
+                      </button>
+                    )}
+                  </div>
+                  <select
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    className="px-4 py-3 bg-white border-2 border-mx-slate-200 rounded-xl text-body text-mx-slate-700 font-medium focus:border-mx-purple-500 focus:ring-2 focus:ring-mx-purple-100 focus:outline-none transition-colors cursor-pointer"
+                  >
+                    {STATES.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <p className="text-body text-mx-slate-600 mb-8">
@@ -257,9 +288,10 @@ export default function BrowseEVs() {
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                   {filteredEVs.map((ev) => {
+                    const statePrice = getDriveAwayPrice(ev)
                     const displayPrice = ev.is_special && ev.special_price
                       ? ev.special_price
-                      : ev.drive_away_price || ev.rrp
+                      : statePrice || ev.drive_away_price || ev.rrp
                     const hasSpecial = ev.is_special && ev.special_price
                     const expiryDate = ev.special_expires_at ? formatDate(ev.special_expires_at) : null
 
@@ -321,7 +353,7 @@ export default function BrowseEVs() {
                               {formatCurrency(displayPrice)}
                             </p>
                             <p className="text-body-sm text-mx-slate-500">
-                              Drive-away price (NSW) • Includes rego & stamp duty
+                              Est. drive-away ({selectedState}) • Incl. rego & stamp duty
                             </p>
                           </div>
 
