@@ -125,6 +125,29 @@ export default function BrowseEVs() {
     })
   }
 
+  const STATES = ['VIC', 'NSW', 'QLD', 'SA', 'WA', 'TAS', 'ACT', 'NT']
+
+  const getDriveAwayPrice = (ev) => {
+    const basePrice = ev.rrp || ev.drive_away_price || 0
+    if (!basePrice) return 0
+
+    const isEV = ev.fuel_type === 'Electric' || !ev.fuel_type
+    const isHybrid = ev.fuel_type === 'Hybrid'
+    const stampDuty = calculateStampDuty(selectedState, basePrice, isEV, isHybrid)
+    const rego = getAnnualRegistration(selectedState, isEV)
+
+    return Math.round(basePrice + stampDuty + rego)
+  }
+
+  const getSpecialSavings = (ev) => {
+    const originalPrice = getDriveAwayPrice(ev)
+    const specialPrice = ev.special_price
+    if (!originalPrice || !specialPrice || specialPrice >= originalPrice) return null
+    const savings = originalPrice - specialPrice
+    const percent = Math.round((savings / originalPrice) * 100)
+    return { savings, percent }
+  }
+
   // Filtered vehicles
   const filteredEVs = evs.filter(ev => {
     if (filter === 'electric' && ev.fuel_type !== 'Electric' && ev.fuel_type) return false
@@ -151,29 +174,6 @@ export default function BrowseEVs() {
 
   const electricCount = evs.filter(ev => ev.fuel_type === 'Electric' || !ev.fuel_type).length
   const hybridCount = evs.filter(ev => ev.fuel_type === 'Hybrid').length
-
-  const STATES = ['VIC', 'NSW', 'QLD', 'SA', 'WA', 'TAS', 'ACT', 'NT']
-
-  const getDriveAwayPrice = (ev) => {
-    const basePrice = ev.rrp || ev.drive_away_price || 0
-    if (!basePrice) return 0
-
-    const isEV = ev.fuel_type === 'Electric' || !ev.fuel_type
-    const isHybrid = ev.fuel_type === 'Hybrid'
-    const stampDuty = calculateStampDuty(selectedState, basePrice, isEV, isHybrid)
-    const rego = getAnnualRegistration(selectedState, isEV)
-
-    return Math.round(basePrice + stampDuty + rego)
-  }
-
-  const getSpecialSavings = (ev) => {
-    const originalPrice = getDriveAwayPrice(ev)
-    const specialPrice = ev.special_price
-    if (!originalPrice || !specialPrice || specialPrice >= originalPrice) return null
-    const savings = originalPrice - specialPrice
-    const percent = Math.round((savings / originalPrice) * 100)
-    return { savings, percent }
-  }
 
   const formatCurrency = (amount) => {
     if (!amount) return '$0'
