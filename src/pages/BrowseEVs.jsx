@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Zap, Calendar, ArrowLeft, Car, Loader2, AlertCircle, Fuel, Phone } from 'lucide-react'
+import { Zap, Calendar, ArrowLeft, Car, Loader2, AlertCircle, Fuel, Phone, Search, X } from 'lucide-react'
 import { fetchEVCatalog } from '../lib/supabase'
 import SEO, { localBusinessSchema } from '../components/shared/SEO'
 import Button from '../components/ui/Button'
@@ -15,6 +15,7 @@ export default function BrowseEVs() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
+  const [search, setSearch] = useState('')
   const [showLeadForm, setShowLeadForm] = useState(false)
   const [selectedVehicleForLead, setSelectedVehicleForLead] = useState(null)
 
@@ -62,9 +63,18 @@ export default function BrowseEVs() {
 
   // Filtered vehicles
   const filteredEVs = evs.filter(ev => {
-    if (filter === 'all') return true
-    if (filter === 'electric') return ev.fuel_type === 'Electric' || !ev.fuel_type
-    if (filter === 'hybrid') return ev.fuel_type === 'Hybrid'
+    // Fuel type filter
+    if (filter === 'electric' && ev.fuel_type !== 'Electric' && ev.fuel_type) return false
+    if (filter === 'hybrid' && ev.fuel_type !== 'Hybrid') return false
+
+    // Search filter
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      const price = ev.drive_away_price || ev.rrp || 0
+      const searchable = `${ev.make} ${ev.model} ${ev.trim || ''} ${ev.year || ''} ${price}`.toLowerCase()
+      if (!searchable.includes(q)) return false
+    }
+
     return true
   })
 
@@ -214,9 +224,30 @@ export default function BrowseEVs() {
                   )}
                 </div>
 
+                {/* Search Bar */}
+                <div className="relative mb-6">
+                  <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-mx-slate-400" />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search by make, model, or price..."
+                    className="w-full pl-12 pr-10 py-3 bg-white border-2 border-mx-slate-200 rounded-xl text-body text-mx-slate-700 placeholder:text-mx-slate-400 focus:border-mx-purple-500 focus:ring-2 focus:ring-mx-purple-100 focus:outline-none transition-colors"
+                  />
+                  {search && (
+                    <button
+                      onClick={() => setSearch('')}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-mx-slate-400 hover:text-mx-slate-600 transition-colors"
+                    >
+                      <X size={18} />
+                    </button>
+                  )}
+                </div>
+
                 <p className="text-body text-mx-slate-600 mb-8">
                   Showing {filteredEVs.length} vehicle{filteredEVs.length !== 1 ? 's' : ''}
                   {filter !== 'all' && ` (${filter})`}
+                  {search && ` matching "${search}"`}
                 </p>
 
                 <motion.div
