@@ -1,5 +1,5 @@
 import {
-  FIXED_RATE,
+  INDICATIVE_TERM_RATES,
   ESTABLISHMENT_FEE,
   DEFERRAL_MONTHS,
   GST_CAP,
@@ -104,7 +104,7 @@ export function calculateLease(inputs) {
 
   // Finance calculations
   const termMonths = leaseTermYears * 12
-  const annualRate = FIXED_RATE
+  const annualRate = INDICATIVE_TERM_RATES[leaseTermYears] || INDICATIVE_TERM_RATES[5]
   const monthlyRate = annualRate / 12
 
   const baseVehicle = driveAwayPrice - stamp - rego

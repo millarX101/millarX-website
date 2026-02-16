@@ -15,7 +15,7 @@ export default function Calculator({ source = 'website', showAdvanced = false })
   const [inputs, setInputs] = useState({
     vehiclePrice: 65000,
     annualSalary: 90000,
-    leaseTermYears: 3,
+    leaseTermYears: 5,
     fuelType: 'Electric Vehicle',
     annualKm: 15000,
     state: 'VIC',

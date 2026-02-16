@@ -1,7 +1,14 @@
 // App constants
 
-// Finance constants
-export const FIXED_RATE = 0.075 // 7.5% interest rate
+// Indicative interest rates by lease term (years)
+// Illustrative only — actual rates depend on market conditions and individual assessment
+export const INDICATIVE_TERM_RATES = {
+  1: 0.0950,  // 9.50% p.a.
+  2: 0.0850,  // 8.50% p.a.
+  3: 0.0800,  // 8.00% p.a.
+  4: 0.0775,  // 7.75% p.a.
+  5: 0.0750,  // 7.50% p.a.
+}
 export const ESTABLISHMENT_FEE = 500
 export const DEFERRAL_MONTHS = 1
 export const GST_CAP = 63340

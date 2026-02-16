@@ -104,7 +104,7 @@ export default function CalculatorResults({
         <div className="p-4 bg-mx-slate-50 rounded-lg">
           <div className="grid grid-cols-2 gap-4 text-body-sm">
             <div>
-              <span className="text-mx-slate-500">Interest Rate</span>
+              <span className="text-mx-slate-500">Indicative Interest Rate</span>
               <p className="font-semibold text-mx-purple-700">
                 {formatPercentage(results.financeRate)} p.a.
               </p>

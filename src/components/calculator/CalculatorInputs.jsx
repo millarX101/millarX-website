@@ -14,6 +14,7 @@ import {
   STATES,
   PAY_PERIODS,
   EV_FBT_THRESHOLD,
+  INDICATIVE_TERM_RATES,
 } from '../../lib/constants'
 
 export default function CalculatorInputs({ inputs, updateInput, showAdvanced = false }) {
@@ -225,14 +226,17 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           helperText="Affects stamp duty and registration costs"
         />
 
-        {/* Interest Rate Info - Important for accuracy */}
+        {/* Interest Rate Info - Dynamic by term */}
         <div className="p-4 bg-mx-slate-50 rounded-lg border border-mx-slate-200">
           <div className="flex justify-between text-body-sm">
-            <span className="text-mx-slate-600">Interest Rate</span>
-            <span className="font-semibold text-mx-purple-700">7.50% p.a. (Fixed)</span>
+            <span className="text-mx-slate-600">Indicative Interest Rate</span>
+            <span className="font-semibold text-mx-purple-700">
+              {((INDICATIVE_TERM_RATES[inputs.leaseTermYears] || 0.075) * 100).toFixed(2)}% p.a.
+            </span>
           </div>
           <p className="text-body-sm text-mx-slate-500 mt-2">
-            Estimate only. All-up rate including fees. Actual rate may vary depending on term.
+            Indicative rate for a {inputs.leaseTermYears}-year term. Actual rates depend on
+            market conditions and individual assessment at time of application.
           </p>
         </div>
 

@@ -225,7 +225,7 @@ export default function CostBreakdown({ results, payPeriod, isEV, onClose }) {
               <tbody className="divide-y divide-mx-slate-100">
                 <tr>
                   <td className="py-3 px-4 text-body text-mx-slate-600">
-                    Interest Rate (Fixed All-Up)
+                    Indicative Interest Rate
                   </td>
                   <td className="py-3 px-4 text-right font-mono font-semibold text-mx-slate-900">
                     {formatPercentage(results.financeRate)}
@@ -339,9 +339,11 @@ export default function CostBreakdown({ results, payPeriod, isEV, onClose }) {
         {/* Disclaimer */}
         <div className="mt-8 pt-6 border-t border-mx-slate-200">
           <p className="text-body-sm text-mx-slate-500 text-center">
-            <strong>Disclaimer:</strong> This is a simplified calculator. Uses fixed 7.50% effective
-            interest rate. Finance includes a 1-month deferral period. This is a basic estimator -
-            actual rates and terms may vary. Consult with a qualified adviser for personalised advice.
+            <strong>Disclaimer:</strong> This calculator provides indicative estimates only and
+            is intended as a guide. Interest rates shown are illustrative and vary by lease term —
+            they are not a quote, offer, or guarantee of any rate. Actual rates are determined at
+            the time of application and depend on prevailing market conditions. Running costs are
+            estimates only. For accurate pricing, please request a formal quote.
           </p>
         </div>
       </Card>
