@@ -57,9 +57,11 @@ function normalizeFuelType(fuelType) {
 export async function saveQuoteRequest(data) {
   // Save to local Supabase (for backup/analytics)
   if (supabase) {
+    // Strip fields that don't exist in the quote_requests table yet
+    const { preferred_colour, required_extras, comments, ...supabaseData } = data
     const { error } = await supabase
       .from('quote_requests')
-      .insert([data])
+      .insert([supabaseData])
       .select()
       .single()
 
@@ -130,9 +132,10 @@ export async function saveQuoteRequest(data) {
         fuel_type: normalizeFuelType(data.calculation_inputs?.fuelType),
         drive_away_price: data.calculation_inputs?.vehiclePrice || 0,
         body_style: null,
-        preferred_colour: data.preferred_colour || null,
-        required_extras: data.required_extras || null,
-        comments: data.comments || null,
+        // TODO: Re-enable once ev_enquiries table has these columns
+        // preferred_colour: data.preferred_colour || null,
+        // required_extras: data.required_extras || null,
+        // comments: data.comments || null,
         need_sourcing_help: true,
         from_calculator: true,
         source: data.source || 'millarx-website',
@@ -190,9 +193,10 @@ export async function saveCatalogLead(data) {
       fuel_type: normalizeFuelType(data.fuel_type),
       drive_away_price: data.drive_away_price || 0,
       body_style: data.body_style || null,
-      preferred_colour: data.preferred_colour || null,
-      required_extras: data.required_extras || null,
-      comments: data.comments || null,
+      // TODO: Re-enable once ev_enquiries table has these columns
+      // preferred_colour: data.preferred_colour || null,
+      // required_extras: data.required_extras || null,
+      // comments: data.comments || null,
       need_sourcing_help: true,
       from_calculator: false,
       source: data.source || 'millarx-website',
