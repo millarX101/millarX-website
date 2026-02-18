@@ -34,6 +34,10 @@ export default function QuoteForm({
     vehicleVariant: calculationInputs?.vehicleVariant || '',
     // Default to 'no' if vehicle is already selected, 'yes' otherwise
     needSourcingHelp: calculationInputs?.vehicleMake ? 'no' : 'yes',
+    // Vehicle preferences
+    preferredColour: '',
+    requiredExtras: '',
+    comments: '',
     // Honeypot field for spam prevention
     website: '',
   })
@@ -140,6 +144,9 @@ export default function QuoteForm({
         vehicle_variant: formData.vehicleVariant || null,
         vehicle_description: vehicleDescription,
         need_sourcing_help: formData.needSourcingHelp,
+        preferred_colour: formData.preferredColour || null,
+        required_extras: formData.requiredExtras || null,
+        comments: formData.comments || null,
 
         // Calculator inputs (full snapshot)
         calculation_inputs: {
@@ -214,6 +221,9 @@ export default function QuoteForm({
       vehicleModel: calculationInputs?.vehicleModel || '',
       vehicleVariant: calculationInputs?.vehicleVariant || '',
       needSourcingHelp: calculationInputs?.vehicleMake ? 'no' : 'yes',
+      preferredColour: '',
+      requiredExtras: '',
+      comments: '',
     })
     setStep(1)
     setSubmitted(false)
@@ -498,7 +508,7 @@ export default function QuoteForm({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Input
                 label="Make"
                 name="vehicleMake"
@@ -523,12 +533,47 @@ export default function QuoteForm({
             </div>
 
             <Select
-              label="Do you need help sourcing the vehicle?"
+              label="Need help sourcing?"
               name="needSourcingHelp"
               value={formData.needSourcingHelp}
               onChange={handleChange}
               options={sourcingOptions}
             />
+
+            {/* Vehicle preferences — only shown when sourcing help is requested */}
+            {formData.needSourcingHelp !== 'no' && (
+              <div className="pt-2 border-t border-mx-slate-100">
+                <p className="text-body-sm font-medium text-mx-slate-600 mb-3">
+                  Vehicle preferences (optional)
+                </p>
+
+                <div className="space-y-3">
+                  <Input
+                    label="Preferred colour"
+                    name="preferredColour"
+                    value={formData.preferredColour}
+                    onChange={handleChange}
+                    placeholder="e.g. White, Black, Silver"
+                  />
+
+                  <Input
+                    label="Required extras"
+                    name="requiredExtras"
+                    value={formData.requiredExtras}
+                    onChange={handleChange}
+                    placeholder="e.g. Tow bar, tinted windows, roof racks"
+                  />
+
+                  <Input
+                    label="Comments"
+                    name="comments"
+                    value={formData.comments}
+                    onChange={handleChange}
+                    placeholder="Anything else we should know?"
+                  />
+                </div>
+              </div>
+            )}
 
             {error && (
               <p className="text-body-sm text-red-600 p-3 bg-red-50 rounded-lg">

@@ -88,9 +88,12 @@ export async function saveQuoteRequest(data) {
     calculation_inputs: data.calculation_inputs,
     calculation_results: data.calculation_results,
     need_sourcing_help: data.need_sourcing_help || null,
-    comments: data.need_sourcing_help === 'yes'
-      ? `Customer wants help sourcing: ${data.vehicle_description || 'vehicle not specified'}`
-      : null,
+    preferred_colour: data.preferred_colour || null,
+    required_extras: data.required_extras || null,
+    comments: data.comments
+      || (data.need_sourcing_help === 'yes'
+        ? `Customer wants help sourcing: ${data.vehicle_description || 'vehicle not specified'}`
+        : null),
     source: data.source || 'millarx-website',
     source_page: data.source_page,
     utm_source: data.utm_source,
@@ -127,6 +130,9 @@ export async function saveQuoteRequest(data) {
         fuel_type: normalizeFuelType(data.calculation_inputs?.fuelType),
         drive_away_price: data.calculation_inputs?.vehiclePrice || 0,
         body_style: null,
+        preferred_colour: data.preferred_colour || null,
+        required_extras: data.required_extras || null,
+        comments: data.comments || null,
         need_sourcing_help: true,
         from_calculator: true,
         source: data.source || 'millarx-website',
@@ -184,6 +190,9 @@ export async function saveCatalogLead(data) {
       fuel_type: normalizeFuelType(data.fuel_type),
       drive_away_price: data.drive_away_price || 0,
       body_style: data.body_style || null,
+      preferred_colour: data.preferred_colour || null,
+      required_extras: data.required_extras || null,
+      comments: data.comments || null,
       need_sourcing_help: true,
       from_calculator: false,
       source: data.source || 'millarx-website',

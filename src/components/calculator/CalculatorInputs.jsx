@@ -59,45 +59,45 @@ export default function CalculatorInputs({ inputs, updateInput, showAdvanced = f
           <label className="block text-body font-medium text-mx-slate-700 mb-3">
             Vehicle Type
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => updateInput('fuelType', 'Electric Vehicle')}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-lg border-2 transition-all',
+                'flex flex-col items-center justify-center gap-1 px-2 py-3 sm:px-3 rounded-lg border-2 transition-all min-w-0',
                 isEV
                   ? 'border-mx-purple-500 bg-mx-purple-50 text-mx-purple-700'
                   : 'border-mx-slate-200 hover:border-mx-slate-300 text-mx-slate-600'
               )}
             >
               <Zap size={20} />
-              <span className="font-medium text-sm">Electric</span>
+              <span className="font-medium text-xs sm:text-sm">Electric</span>
             </button>
             <button
               type="button"
               onClick={() => updateInput('fuelType', 'Hybrid')}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-lg border-2 transition-all',
+                'flex flex-col items-center justify-center gap-1 px-2 py-3 sm:px-3 rounded-lg border-2 transition-all min-w-0',
                 isHybrid
                   ? 'border-mx-purple-500 bg-mx-purple-50 text-mx-purple-700'
                   : 'border-mx-slate-200 hover:border-mx-slate-300 text-mx-slate-600'
               )}
             >
               <Fuel size={20} />
-              <span className="font-medium text-sm">Hybrid</span>
+              <span className="font-medium text-xs sm:text-sm">Hybrid</span>
             </button>
             <button
               type="button"
               onClick={() => updateInput('fuelType', 'SUV')}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-lg border-2 transition-all',
+                'flex flex-col items-center justify-center gap-1 px-2 py-3 sm:px-3 rounded-lg border-2 transition-all min-w-0',
                 !isEV && !isHybrid
                   ? 'border-mx-purple-500 bg-mx-purple-50 text-mx-purple-700'
                   : 'border-mx-slate-200 hover:border-mx-slate-300 text-mx-slate-600'
               )}
             >
               <Car size={20} />
-              <span className="font-medium text-sm">Petrol/Diesel</span>
+              <span className="font-medium text-xs sm:text-sm leading-tight text-center">Petrol / Diesel</span>
             </button>
           </div>
         </div>

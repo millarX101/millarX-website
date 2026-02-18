@@ -12,6 +12,9 @@ export default function CatalogLeadForm({ isOpen, onClose, selectedVehicle }) {
     name: '',
     email: '',
     phone: '',
+    preferred_colour: '',
+    required_extras: '',
+    comments: '',
     website: '', // Honeypot
   })
   const [loading, setLoading] = useState(false)
@@ -41,6 +44,9 @@ export default function CatalogLeadForm({ isOpen, onClose, selectedVehicle }) {
         name: formData.name,
         email: formData.email,
         phone: formData.phone || null,
+        preferred_colour: formData.preferred_colour || null,
+        required_extras: formData.required_extras || null,
+        comments: formData.comments || null,
         vehicle_make: selectedVehicle?.make || null,
         vehicle_model: selectedVehicle?.model || null,
         vehicle_variant: selectedVehicle?.trim || null,
@@ -74,14 +80,14 @@ export default function CatalogLeadForm({ isOpen, onClose, selectedVehicle }) {
   }
 
   const handleClose = () => {
-    setFormData({ name: '', email: '', phone: '', website: '' })
+    setFormData({ name: '', email: '', phone: '', preferred_colour: '', required_extras: '', comments: '', website: '' })
     setSubmitted(false)
     onClose()
   }
 
   if (submitted) {
     return (
-      <Modal isOpen={isOpen} onClose={handleClose} title="" size="sm">
+      <Modal isOpen={isOpen} onClose={handleClose} title="" size="md">
         <div className="text-center py-6">
           <motion.div
             initial={{ scale: 0 }}
@@ -105,7 +111,7 @@ export default function CatalogLeadForm({ isOpen, onClose, selectedVehicle }) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Help Me Buy This" size="sm">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Help Me Buy This" size="md">
       <form onSubmit={handleSubmit} className="space-y-4">
         <Honeypot value={formData.website} onChange={handleChange} />
 
@@ -148,6 +154,39 @@ export default function CatalogLeadForm({ isOpen, onClose, selectedVehicle }) {
           onChange={handleChange}
           placeholder="0400 000 000"
         />
+
+        {/* Vehicle preferences (optional) */}
+        <div className="pt-2 border-t border-mx-slate-100">
+          <p className="text-body-sm font-medium text-mx-slate-600 mb-3">
+            Vehicle preferences (optional)
+          </p>
+
+          <div className="space-y-3">
+            <Input
+              label="Preferred colour"
+              name="preferred_colour"
+              value={formData.preferred_colour}
+              onChange={handleChange}
+              placeholder="e.g. White, Black, Silver"
+            />
+
+            <Input
+              label="Required extras"
+              name="required_extras"
+              value={formData.required_extras}
+              onChange={handleChange}
+              placeholder="e.g. Tow bar, tinted windows, roof racks"
+            />
+
+            <Input
+              label="Comments"
+              name="comments"
+              value={formData.comments}
+              onChange={handleChange}
+              placeholder="Anything else we should know?"
+            />
+          </div>
+        </div>
 
         <Button
           type="submit"
