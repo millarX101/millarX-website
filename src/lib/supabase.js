@@ -350,6 +350,59 @@ export async function saveContactSubmission(data) {
   return { data: null, error: null }
 }
 
+/**
+ * Save a drive day registration to Supabase AND forward to mxDriveIQ
+ */
+export async function saveDriveDayRegistration(data) {
+  // Save to local Supabase
+  if (supabase) {
+    const { error } = await supabase
+      .from('drive_day_registrations')
+      .insert([{
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        preferred_day: data.preferred_day || null,
+        bringing_passenger: data.bringing_passenger || null,
+        event_name: 'mazda-6e-drive-day',
+        source_page: data.source_page || '/mazda-6e-drive-day',
+      }])
+
+    if (error) {
+      console.error('Error saving to Supabase:', error)
+    }
+  }
+
+  // Forward to mxDriveIQ via Netlify function
+  const mxDriveIQPayload = {
+    lead_type: 'drive_day_registration',
+    name: data.name,
+    email: data.email,
+    phone: data.phone || null,
+    preferred_day: data.preferred_day || null,
+    bringing_passenger: data.bringing_passenger || null,
+    source: 'millarx-website',
+    source_page: data.source_page || '/mazda-6e-drive-day',
+    message: `Mazda 6e Drive Day registration. Preferred day: ${data.preferred_day || 'Not specified'}. Bringing passenger: ${data.bringing_passenger || 'Not specified'}.`,
+  }
+
+  try {
+    const response = await fetch('/.netlify/functions/forward-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+
+    if (!response.ok) {
+      console.error('mxDriveIQ API error:', await response.text())
+    }
+  } catch (err) {
+    console.error('Error forwarding drive day registration:', err)
+  }
+
+  return { data: null, error: null }
+}
+
 export default supabase
 
 // ============================================
@@ -497,5 +550,15 @@ export const MEDIA = {
   icons: {
     evBadge: 'images/icons/ev-badge.svg',
     savingsBadge: 'images/icons/savings-badge.svg',
+  },
+
+  // Partner logos
+  partnerLogos: {
+    ringwoodMazda: 'https://ktsjfqbosdmataezkcbh.supabase.co/storage/v1/object/public/media/logos/Ringwood%20Mazda.png',
+  },
+
+  // Event images
+  events: {
+    mazda6e: 'https://ktsjfqbosdmataezkcbh.supabase.co/storage/v1/object/public/media/images/mazda-6e-atenza.jpg',
   },
 }

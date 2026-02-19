@@ -11,6 +11,7 @@ import Terms from './pages/Terms'
 import Complaints from './pages/Complaints'
 import CreditGuide from './pages/CreditGuide'
 import RedditExclusive from './pages/RedditExclusive'
+import Mazda6eDriveDay from './pages/Mazda6eDriveDay'
 import BrowseEVs from './pages/BrowseEVs'
 import LeaseRescueUpload from './pages/LeaseRescueUpload'
 import AboutUs from './pages/AboutUs'
@@ -37,6 +38,9 @@ function App() {
 
         {/* Reddit exclusive page - no nav, minimal layout */}
         <Route path="/redditnl" element={<RedditExclusive />} />
+
+        {/* Mazda 6e Drive Day - standalone landing page */}
+        <Route path="/mazda-6e-drive-day" element={<Mazda6eDriveDay />} />
 
         {/* Employer Guide - standalone print-friendly page */}
         <Route path="/employer-guide" element={<EmployerGuide />} />
