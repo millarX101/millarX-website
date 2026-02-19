@@ -400,7 +400,57 @@ export async function saveDriveDayRegistration(data) {
     console.error('Error forwarding drive day registration:', err)
   }
 
+  // Send email notification to ben@millarx.com.au
+  try {
+    await fetch('/.netlify/functions/drive-day-notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        preferred_day: data.preferred_day || null,
+        bringing_passenger: data.bringing_passenger || null,
+      }),
+    })
+  } catch (err) {
+    console.error('Error sending drive day notification:', err)
+  }
+
+  // Send confirmation email to the registrant
+  try {
+    await fetch('/.netlify/functions/drive-day-confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+      }),
+    })
+  } catch (err) {
+    console.error('Error sending confirmation email:', err)
+  }
+
   return { data: null, error: null }
+}
+
+/**
+ * Get the number of drive day registrations (for live spots counter)
+ */
+export async function getDriveDayRegistrationCount() {
+  if (!supabase) return 0
+
+  const { count, error } = await supabase
+    .from('drive_day_registrations')
+    .select('*', { count: 'exact', head: true })
+    .eq('event_name', 'mazda-6e-drive-day')
+
+  if (error) {
+    console.error('Error fetching registration count:', error)
+    return 0
+  }
+
+  return count || 0
 }
 
 export default supabase

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Calendar, MapPin, Car, CheckCircle, Users } from 'lucide-react'
@@ -10,7 +10,9 @@ import Honeypot, { isSpamSubmission } from '../components/ui/Honeypot'
 import SEO from '../components/shared/SEO'
 import BlurCircle from '../components/shared/BlurCircle'
 import { fadeInUp, staggerContainer, staggerItem } from '../lib/animations'
-import { getMediaUrl, MEDIA, saveDriveDayRegistration } from '../lib/supabase'
+import { getMediaUrl, MEDIA, saveDriveDayRegistration, getDriveDayRegistrationCount } from '../lib/supabase'
+
+const TOTAL_SPOTS = 100
 
 const PREFERRED_DAY_OPTIONS = [
   { value: 'weekday', label: 'Weekday' },
@@ -56,6 +58,13 @@ export default function Mazda6eDriveDay() {
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState(null)
+  const [spotsRemaining, setSpotsRemaining] = useState(TOTAL_SPOTS)
+
+  useEffect(() => {
+    getDriveDayRegistrationCount().then((count) => {
+      setSpotsRemaining(Math.max(0, TOTAL_SPOTS - count))
+    })
+  }, [])
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -82,6 +91,7 @@ export default function Mazda6eDriveDay() {
         source_page: '/mazda-6e-drive-day',
       })
       setSubmitted(true)
+      setSpotsRemaining((prev) => Math.max(0, prev - 1))
     } catch (err) {
       console.error('Registration error:', err)
       setError('Something went wrong. Please try again or email us directly.')
@@ -160,7 +170,9 @@ export default function Mazda6eDriveDay() {
               >
                 <Users className="text-mx-purple-600" size={20} />
                 <span className="text-body-lg font-semibold text-mx-purple-700">
-                  Only 100 spots available — book early
+                  {spotsRemaining > 0
+                    ? `Only ${spotsRemaining} spot${spotsRemaining === 1 ? '' : 's'} remaining — book early`
+                    : 'Fully booked — join the waitlist'}
                 </span>
               </motion.div>
             </motion.div>

@@ -11,6 +11,10 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Scheduled function: drive day drip emails (daily at 9am AEST / 11pm UTC)
+[functions."drive-day-drip"]
+  schedule = "0 23 * * *"
+
 [[headers]]
   for = "/*"
   [headers.values]
