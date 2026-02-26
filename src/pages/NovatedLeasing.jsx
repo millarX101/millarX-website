@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { ArrowDown, Search, DollarSign, Zap } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowDown, Search, DollarSign, Zap, Radio, ArrowRight } from 'lucide-react'
 import Calculator from '../components/calculator/Calculator'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
@@ -148,6 +149,22 @@ export default function NovatedLeasing() {
             </motion.div>
 
           </motion.div>
+        </div>
+      </section>
+
+      {/* KissFM Listener Banner */}
+      <section className="px-4 py-3 bg-gradient-to-r from-mx-purple-900 via-mx-purple-800 to-mx-pink-600">
+        <div className="container-wide mx-auto">
+          <Link
+            to="/kissfm"
+            className="flex items-center justify-center gap-3 text-white hover:opacity-90 transition-opacity"
+          >
+            <Radio size={18} className="flex-shrink-0" />
+            <span className="text-body font-semibold">
+              KissFM listener? Get your exclusive free quote
+            </span>
+            <ArrowRight size={16} className="flex-shrink-0" />
+          </Link>
         </div>
       </section>
 

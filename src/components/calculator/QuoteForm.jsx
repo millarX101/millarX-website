@@ -38,6 +38,8 @@ export default function QuoteForm({
     preferredColour: '',
     requiredExtras: '',
     comments: '',
+    // How did you hear about us (optional)
+    referralSource: '',
     // Honeypot field for spam prevention
     website: '',
   })
@@ -77,6 +79,15 @@ export default function QuoteForm({
       }))
     }
   }, [isOpen, calculationInputs])
+
+  const referralOptions = [
+    { value: 'kissfm', label: 'KissFM' },
+    { value: 'reddit', label: 'Reddit' },
+    { value: 'socials', label: 'Social Media' },
+    { value: 'word-of-mouth', label: 'Word of Mouth' },
+    { value: 'google', label: 'Google Search' },
+    { value: 'other', label: 'Other' },
+  ]
 
   const sourcingOptions = [
     { value: 'yes', label: "Yes, help me find the best deal" },
@@ -173,6 +184,9 @@ export default function QuoteForm({
           stampDuty: calculationResults.stampDuty,
         },
 
+        // Referral source
+        referral_source: formData.referralSource || null,
+
         // Tracking
         source,
         source_page: window.location.pathname,
@@ -224,6 +238,7 @@ export default function QuoteForm({
       preferredColour: '',
       requiredExtras: '',
       comments: '',
+      referralSource: '',
     })
     setStep(1)
     setSubmitted(false)
@@ -364,6 +379,15 @@ export default function QuoteForm({
               onChange={handleChange}
               placeholder="0400 000 000"
               helperText="For faster response if needed"
+            />
+
+            <Select
+              label="How did you hear about us? (optional)"
+              name="referralSource"
+              value={formData.referralSource}
+              onChange={handleChange}
+              options={referralOptions}
+              placeholder="Select one..."
             />
 
             <div className="flex gap-3 pt-4">

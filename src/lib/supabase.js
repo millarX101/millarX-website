@@ -96,6 +96,7 @@ export async function saveQuoteRequest(data) {
       || (data.need_sourcing_help === 'yes'
         ? `Customer wants help sourcing: ${data.vehicle_description || 'vehicle not specified'}`
         : null),
+    referral_source: data.referral_source || null,
     source: data.source || 'millarx-website',
     source_page: data.source_page,
     utm_source: data.utm_source,
@@ -435,6 +436,95 @@ export async function saveDriveDayRegistration(data) {
 }
 
 /**
+ * Save a KissFM lead to Supabase AND forward to mxDriveIQ
+ * Also sends email notification to ben@millarx.com.au
+ */
+export async function saveKissFMLead(data) {
+  // Save to local Supabase
+  if (supabase) {
+    const { error } = await supabase
+      .from('kissfm_leads')
+      .insert([{
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        employer: data.employer || null,
+        source: 'kissfm',
+        source_page: data.source_page || '/kissfm',
+        utm_source: data.utm_source || 'kissfm',
+        utm_medium: data.utm_medium || null,
+        utm_campaign: data.utm_campaign || null,
+      }])
+
+    if (error) {
+      console.error('Error saving KissFM lead to Supabase:', error)
+    }
+  }
+
+  // Forward to mxDriveIQ via Netlify function
+  // Uses lead_type 'quote_request' so backend processes it through the same pipeline
+  // as calculator leads — identified as KissFM via source field
+  const mxDriveIQPayload = {
+    lead_type: 'quote_request',
+    name: data.name,
+    email: data.email,
+    phone: data.phone || null,
+    employer: data.employer || null,
+    vehicle_make: null,
+    vehicle_model: null,
+    vehicle_variant: null,
+    vehicle_description: null,
+    vehicle_price: null,
+    fuel_type: null,
+    lease_term: null,
+    annual_km: null,
+    annual_salary: null,
+    state: null,
+    need_sourcing_help: null,
+    calculation_inputs: null,
+    calculation_results: null,
+    source: 'kissfm',
+    source_page: data.source_page || '/kissfm',
+    utm_source: data.utm_source || 'kissfm',
+    utm_medium: data.utm_medium || null,
+    utm_campaign: data.utm_campaign || null,
+    message: `KissFM partnership lead. Employer: ${data.employer || 'Not specified'}.`,
+  }
+
+  try {
+    const response = await fetch('/.netlify/functions/forward-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mxDriveIQPayload),
+    })
+
+    if (!response.ok) {
+      console.error('mxDriveIQ API error:', await response.text())
+    }
+  } catch (err) {
+    console.error('Error forwarding KissFM lead:', err)
+  }
+
+  // Send email notification to ben@millarx.com.au
+  try {
+    await fetch('/.netlify/functions/forward-kissfm-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        employer: data.employer || null,
+      }),
+    })
+  } catch (err) {
+    console.error('Error sending KissFM lead notification:', err)
+  }
+
+  return { data: null, error: null }
+}
+
+/**
  * Get the number of drive day registrations (for live spots counter)
  */
 export async function getDriveDayRegistrationCount() {
@@ -605,6 +695,7 @@ export const MEDIA = {
   // Partner logos
   partnerLogos: {
     ringwoodMazda: 'https://ktsjfqbosdmataezkcbh.supabase.co/storage/v1/object/public/media/logos/Ringwood%20Mazda.png',
+    kissfm: null, // TODO: Upload KissFM logo to Supabase Storage and add URL here
   },
 
   // Event images
