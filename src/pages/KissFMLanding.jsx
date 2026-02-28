@@ -402,13 +402,13 @@ export default function KissFMLanding() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
-                    href="https://kissfm.com.au/listen-live/"
+                    href="https://kissfm.com.au/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-mx-slate-600 text-mx-slate-300 hover:text-white hover:border-mx-slate-400 transition-colors"
                   >
                     <Radio size={18} />
-                    Listen Live
+                    KissFM
                     <ArrowRight size={16} />
                   </a>
                   <a
