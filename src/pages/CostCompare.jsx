@@ -17,7 +17,7 @@ const costCompareFAQs = [
   },
   {
     question: 'What is millarX mode and why does it use one fewer payment?',
-    answer: 'millarX quotes payments in arrears, meaning your first payment isn\'t taken until the end of the first period. This results in one fewer payment over the lease term compared to providers who collect in advance. Our comparison tool automatically adjusts for this so the comparison is fair.',
+    answer: 'Most novated lease providers defer payments for two months, meaning your first payment isn\'t taken until month three. millarX starts your payments at the beginning of month two — one month earlier — which means one fewer payment over the full lease term. Our comparison tool automatically adjusts for this so the comparison is fair.',
   },
   {
     question: 'Should I include running costs like tyres and servicing in the comparison?',

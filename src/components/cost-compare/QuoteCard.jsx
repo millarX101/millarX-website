@@ -104,7 +104,7 @@ export default function QuoteCard({
             <div className="mt-2 flex items-start gap-2 bg-mx-purple-50 border border-mx-purple-100 rounded-lg px-3 py-2">
               <Info size={14} className="text-mx-purple-500 flex-shrink-0 mt-0.5" />
               <span className="text-xs text-mx-purple-700">
-                <span className="font-semibold">Arrears model</span> — we quote one fewer payment than competitors. The comparison adjusts for this automatically.
+                <span className="font-semibold">Earlier start</span> — we begin payments at month two instead of month three, resulting in one fewer payment over the term. The comparison adjusts for this automatically.
               </span>
             </div>
           )}
