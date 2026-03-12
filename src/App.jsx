@@ -16,6 +16,7 @@ import KissFMLanding from './pages/KissFMLanding'
 import BrowseEVs from './pages/BrowseEVs'
 import LeaseRescueUpload from './pages/LeaseRescueUpload'
 import AboutUs from './pages/AboutUs'
+import CostCompare from './pages/CostCompare'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/complaints" element={<Complaints />} />
           <Route path="/credit-guide" element={<CreditGuide />} />
           <Route path="/browse-evs" element={<BrowseEVs />} />
+          <Route path="/cost-compare" element={<CostCompare />} />
           <Route path="/about" element={<AboutUs />} />
         </Route>
 

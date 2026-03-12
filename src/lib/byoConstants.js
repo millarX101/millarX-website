@@ -3,11 +3,11 @@
 
 // Fixed interest rates by term (years)
 export const BYO_TERM_RATES = {
-  1: 9.50,
-  2: 8.00,
-  3: 7.50,
-  4: 7.35,
-  5: 7.30
+  1: 9.80,
+  2: 8.30,
+  3: 7.80,
+  4: 7.65,
+  5: 7.60
 }
 
 // ATO minimum balloon/residual percentages by lease term

@@ -3,11 +3,11 @@
 // Indicative interest rates by lease term (years)
 // Illustrative only — actual rates depend on market conditions and individual assessment
 export const INDICATIVE_TERM_RATES = {
-  1: 0.0950,  // 9.50% p.a.
-  2: 0.0850,  // 8.50% p.a.
-  3: 0.0800,  // 8.00% p.a.
-  4: 0.0775,  // 7.75% p.a.
-  5: 0.0750,  // 7.50% p.a.
+  1: 0.0980,  // 9.80% p.a.
+  2: 0.0880,  // 8.80% p.a.
+  3: 0.0830,  // 8.30% p.a.
+  4: 0.0805,  // 8.05% p.a.
+  5: 0.0780,  // 7.80% p.a.
 }
 export const ESTABLISHMENT_FEE = 500
 export const DEFERRAL_MONTHS = 1
@@ -147,6 +147,7 @@ export const STATES = [
 export const NAV_LINKS = [
   { path: '/novated-leasing', label: 'Novated Leasing' },
   { path: '/lease-analysis', label: 'Lease Analysis' },
+  { path: '/cost-compare', label: 'Compare Quotes' },
   { path: '/employers', label: 'Employers' },
   { path: '/about', label: 'About' },
   { path: '/contact', label: 'Contact' }
