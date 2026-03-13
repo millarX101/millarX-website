@@ -139,7 +139,7 @@ export default function CostCompareCalculator() {
   }, [ranked.length, termYears, frequency])
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       {/* Global Controls Bar */}
       <motion.div
         className="bg-white rounded-xl shadow-card p-6 border border-mx-slate-100"

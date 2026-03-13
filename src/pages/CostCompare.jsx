@@ -67,22 +67,22 @@ export default function CostCompare() {
         <BlurCircle color="purple" size="xl" className="-top-40 -right-40" />
         <BlurCircle color="teal" size="lg" className="top-20 -left-32" />
 
-        <div className="container-wide section-padding relative z-10">
+        <div className="container-wide px-4 pt-12 pb-6 md:px-6 lg:px-8 lg:pt-16 lg:pb-8 relative z-10">
           <motion.div className="max-w-3xl" {...fadeInUp}>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-lg bg-mx-purple-100 flex items-center justify-center">
-                <Scale size={20} className="text-mx-purple-600" />
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 rounded-lg bg-mx-purple-100 flex items-center justify-center">
+                <Scale size={18} className="text-mx-purple-600" />
               </div>
-              <span className="text-sm font-semibold uppercase tracking-wider text-mx-purple-600">
+              <span className="text-xs font-semibold uppercase tracking-wider text-mx-purple-600">
                 Cost Compare Tool
               </span>
             </div>
 
-            <h1 className="font-serif text-display-lg text-mx-slate-900 mb-4">
+            <h1 className="font-serif text-display-lg text-mx-slate-900 mb-3">
               See exactly what you{' '}
               <span className="gradient-text">really pay.</span>
             </h1>
-            <p className="text-body-lg text-mx-slate-500 max-w-xl mb-8">
+            <p className="text-body text-mx-slate-500 max-w-xl mb-5">
               Enter the numbers from any novated lease quote. We cut through the noise and give you the true total cost — fixed components only, no smoke, no mirrors.
             </p>
 
@@ -98,23 +98,23 @@ export default function CostCompare() {
       </section>
 
       {/* How to use callout */}
-      <section className="container-wide pb-8">
+      <section className="container-wide px-4 md:px-6 lg:px-8 pb-6">
         <motion.div
-          className="bg-mx-teal-50 border border-mx-teal-200 border-l-4 border-l-mx-teal-500 rounded-xl p-5 flex gap-4 items-start"
+          className="bg-mx-teal-50 border border-mx-teal-200 border-l-4 border-l-mx-teal-500 rounded-xl p-4 flex gap-3 items-start"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <span className="text-xl flex-shrink-0 mt-0.5">💡</span>
+          <span className="text-lg flex-shrink-0 mt-0.5">💡</span>
           <div>
-            <p className="font-bold text-mx-slate-800 text-sm mb-1">
+            <p className="font-bold text-mx-slate-800 text-sm mb-0.5">
               You don't need rates, salary figures, or employer details.
             </p>
-            <p className="text-sm text-mx-slate-600 leading-relaxed">
-              Just grab three numbers off any quote — the payment, the balloon, and the fees. That's it.
+            <p className="text-xs text-mx-slate-600 leading-relaxed">
+              Just grab three numbers off any quote — the payment, the balloon, and the fees.
               This calculator compares what you actually hand over across the full term.{' '}
               <span className="font-semibold text-mx-slate-800">
-                Lowest total cost wins. Every time, no exceptions.
+                Lowest total cost wins.
               </span>
             </p>
           </div>
@@ -122,14 +122,14 @@ export default function CostCompare() {
       </section>
 
       {/* Calculator */}
-      <section id="calculator" className="container-wide section-padding pt-0">
+      <section id="calculator" className="container-wide px-4 pb-12 md:px-6 lg:px-8">
         <CostCompareCalculator />
       </section>
 
       {/* Methodology */}
-      <section className="container-wide pb-12">
-        <div className="border-t border-mx-slate-100 pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <section className="container-wide px-4 md:px-6 lg:px-8 pb-10">
+        <div className="border-t border-mx-slate-100 pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-mx-slate-400 mb-3">
                 How we calculate
@@ -188,7 +188,7 @@ export default function CostCompare() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-gradient-to-b from-mx-purple-700 via-mx-purple-800 to-mx-slate-900 text-white">
+      <section className="section-padding bg-gradient-to-br from-mx-purple-900 via-mx-purple-700 to-mx-pink-600 text-white">
         <div className="container-narrow mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -197,9 +197,9 @@ export default function CostCompare() {
           >
             <h2 className="text-display-md font-serif mb-4">
               Now you've seen the numbers.{' '}
-              <span className="text-mx-purple-300">Get the real deal.</span>
+              <span className="text-mx-purple-200">Get the real deal.</span>
             </h2>
-            <p className="text-body-lg text-purple-200 mb-8 max-w-xl mx-auto">
+            <p className="text-body-lg text-mx-purple-100 mb-8 max-w-xl mx-auto">
               Let us show you what a transparent lease actually looks like. No inflated fees, no hidden margins — just a clean quote you can trust.
             </p>
 
@@ -207,7 +207,7 @@ export default function CostCompare() {
               {['Transparent pricing', 'No hidden fees', 'Arrears model — pay less'].map((item) => (
                 <div key={item} className="flex items-center gap-2 text-sm">
                   <CheckCircle size={18} className="text-mx-teal-400 flex-shrink-0" />
-                  <span className="text-purple-100">{item}</span>
+                  <span className="text-mx-purple-100">{item}</span>
                 </div>
               ))}
             </div>
@@ -224,7 +224,7 @@ export default function CostCompare() {
       </section>
 
       {/* FAQ Section */}
-      <section className="container-wide section-padding pt-0">
+      <section className="container-wide px-4 py-12 md:px-6 lg:px-8">
         <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true }}>
           <motion.h2
             className="font-serif text-display-sm text-mx-slate-900 mb-8"
